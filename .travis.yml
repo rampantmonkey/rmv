@@ -3,6 +3,8 @@ script: bundle exec rake
 before_install:
   - gem update --system
   - gem --version
+  - gem install bundler
+  - bundle --version
 rvm:
   - "2.0.0"
 matrix:
