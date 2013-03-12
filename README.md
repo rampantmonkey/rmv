@@ -7,7 +7,7 @@ Build webpage summarizing resource usage of distributed application.
 ## Time series
 The time series input format has one header line describing the columns followed by one row of values captured at each sampling interval.
 
-    #wall_clock concurrent_processes cpu_time virtual_memory resident_memory
+    #wall_clock concurrent_processes cpu_time virtual_memory resident_memory bytes_read bytes_written workdir_number_files_dirs workdir_footprint
     1362750141.056653       1       0.000000        2173    88      372736  0       101     8550.064460
     1362750141.060311       1       0.000000        20003   495     2051945 0       102     8550.064460
 
