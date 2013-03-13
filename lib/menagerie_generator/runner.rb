@@ -9,5 +9,8 @@ module MenagerieGenerator
       @source = argv[0]
       @destination = argv[1]
     end
+
+    def run
+    end
   end
 end
