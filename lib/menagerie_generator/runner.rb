@@ -112,6 +112,10 @@ module MenagerieGenerator
       end
 
       def histogram_format(width: 600, height: 600, resource: "", data_path: "/tmp")
+        max = scale_maximum resource.to_s, @maximums[resource].max
+        binwidth = 1
+        binwidth = max/40 unless max <= 40
+        puts "#{resource}: #{binwidth}"
         %Q{set terminal png size #{width},#{height}
         set bmargin 4
         set style line 1
@@ -119,11 +123,12 @@ module MenagerieGenerator
 
         set ylabel "Frequency"
         set output "#{@destination + resource.to_s}_#{width}x#{height}_hist.png"
-        binwidth=1
+        binwidth=#{binwidth}
         set boxwidth binwidth*0.9
         set style fill solid 0.5
         bin(x,width)=width*floor(x/width)
         set yrange [0:*]
+        set xrange [0:*]
         set xlabel "#{resource.to_s}"
         plot "#{data_path.to_s}" using (bin(\$1,binwidth)):(1.0) smooth freq with boxes
         }
