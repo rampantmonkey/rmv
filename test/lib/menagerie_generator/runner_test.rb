@@ -38,6 +38,19 @@ module MenagerieGenerator
       should "find 9 summary files" do
         assert_equal 9, @r.summaries.size
       end
+
+      should "process header line" do
+        expected = [:"wall_clock(seconds)",
+                    :concurrent_processes,
+                    :"cpu_time(seconds)",
+                    :"virtual_memory(kB)",
+                    :"resident_memory(kB)",
+                    :bytes_read,
+                    :bytes_written,
+                    :workdir_number_files_dirs,
+                    :"workdir_footprint(MB)"]
+        assert_equal expected, @r.resources
+      end
     end
   end
 end

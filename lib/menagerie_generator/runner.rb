@@ -1,8 +1,10 @@
 require_relative '../menagerie_generator'
 
+require 'pathname'
+
 module MenagerieGenerator
   class Runner
-    attr_reader :source, :destination, :time_series, :summaries
+    attr_reader :source, :destination, :time_series, :summaries, :resources
 
     def initialize argv
       process_arguments argv
@@ -10,6 +12,7 @@ module MenagerieGenerator
 
     def run
       find_files
+      find_resources
     end
 
     private
@@ -31,6 +34,13 @@ module MenagerieGenerator
         end
         @time_series = time_series
         @summaries = summaries
+      end
+
+      def find_resources
+        header = time_series.first.open(&:readline).chomp
+        header = header[1..-1]
+        header = header.split /\s+/
+        @resources = header.map {|h| h.to_sym}
       end
   end
 end
