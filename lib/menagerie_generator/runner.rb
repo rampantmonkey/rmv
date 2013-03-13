@@ -54,7 +54,7 @@ module MenagerieGenerator
       def create_histograms
         @maximums = find_maximums
         write_maximum_values {|a, b| scale_maximum a, b}
-        build_histograms
+        build_histograms [[600,600],[250,250]]
       end
 
       def find_maximums
@@ -87,9 +87,13 @@ module MenagerieGenerator
         end
       end
 
-      def build_histograms
-        @resources.each do |r|
-          gnuplot {|io| io.puts histogram_format(resource: r, data_path: @destination+r.to_s)}
+      def build_histograms sizes=[[600,600]]
+        sizes.each do |s|
+          width = s.first
+          height = s.last
+          @resources.each do |r|
+            gnuplot {|io| io.puts histogram_format(width: width, height: height, resource: r, data_path: @destination+r.to_s)}
+          end
         end
       end
 
@@ -114,7 +118,7 @@ module MenagerieGenerator
         unset key
 
         set ylabel "Frequency"
-        set output "#{@destination + resource.to_s}_hist.png"
+        set output "#{@destination + resource.to_s}_#{width}x#{height}_hist.png"
         binwidth=1
         set boxwidth binwidth*0.9
         set style fill solid 0.5
