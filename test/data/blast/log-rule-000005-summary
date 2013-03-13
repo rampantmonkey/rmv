@@ -1,0 +1,14 @@
+command: ./distributed.script 4 
+start:                        	1362752819.874210
+end:                          	1362758872.652549
+exit_type:                    	normal
+exit_status:                  	0
+max_concurrent_processes:     	3
+wall_time:                    	6052.778339
+cpu_time:                     	6028.430000
+virtual_memory:               	1274782
+resident_memory:              	616171
+bytes_read:                   	2533243778
+bytes_written:                	290816
+workdir_number_files_dirs:    	52
+workdir_footprint:            	8548.010593

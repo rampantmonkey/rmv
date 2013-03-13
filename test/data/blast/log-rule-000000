@@ -1,0 +1,8 @@
+#wall_clock(seconds)	concurrent_processes	cpu_time(seconds)	virtual_memory(kB)	resident_memory(kB)	bytes_read	bytes_written	workdir_number_files_dirs	workdir_footprint(MB)	
+1362750141.056653	1	0.000000	2173	88	372736	0	101	8550.064460
+1362750141.060311	1	0.000000	20003	495	2051945	0	102	8550.064460
+
+
+# opened files:
+#
+# /dev/tty
