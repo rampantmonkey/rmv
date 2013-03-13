@@ -40,7 +40,14 @@ module MenagerieGenerator
         header = time_series.first.open(&:readline).chomp
         header = header[1..-1]
         header = header.split /\s+/
-        @resources = header.map {|h| h.gsub(/\(.*\)/, '').to_sym}
+        @resources = header.map {|h| h.gsub(/\(.*\)/, '')}
+        @resources.map! {|r| translate_resource_name r}
+        @resources.map! {|r| r.to_sym}
+      end
+
+      def translate_resource_name name
+        name.gsub /clock/, 'time'
+      end
       end
   end
 end

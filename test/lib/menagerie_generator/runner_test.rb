@@ -40,7 +40,7 @@ module MenagerieGenerator
       end
 
       should "process header line" do
-        expected = [:wall_clock,
+        expected = [:wall_time,
                     :concurrent_processes,
                     :cpu_time,
                     :virtual_memory,
