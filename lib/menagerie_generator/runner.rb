@@ -23,6 +23,7 @@ module MenagerieGenerator
         fail ::ArgumentError unless args.length > 1
         @source = Pathname.new args[0]
         @destination = Pathname.new args[1]
+        @destination.mkpath unless @destination.exist?
       end
 
       def find_files
