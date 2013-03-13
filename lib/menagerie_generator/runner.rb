@@ -53,7 +53,7 @@ module MenagerieGenerator
 
       def create_histograms
         @maximums = find_maximums
-        write_maximum_values
+        write_maximum_values {|a, b| scale_maximum a, b}
         build_histograms
       end
 
@@ -70,11 +70,19 @@ module MenagerieGenerator
         max
       end
 
+      def scale_maximum key, value
+        value /= 1024 if key.match /byte/
+        value
+      end
+
       def write_maximum_values
         @maximums.each do |m|
           path = @destination + m.first.to_s
           File.open(path, 'w:UTF-8') do |f|
-            m.last.each { |line| f.puts line }
+            m.last.each do |line|
+              line = yield( m.first, line) if block_given?
+              f.puts line
+            end
           end
         end
       end
