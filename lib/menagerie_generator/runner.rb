@@ -40,7 +40,7 @@ module MenagerieGenerator
         header = time_series.first.open(&:readline).chomp
         header = header[1..-1]
         header = header.split /\s+/
-        @resources = header.map {|h| h.to_sym}
+        @resources = header.map {|h| h.gsub(/\(.*\)/, '').to_sym}
       end
   end
 end

@@ -40,15 +40,15 @@ module MenagerieGenerator
       end
 
       should "process header line" do
-        expected = [:"wall_clock(seconds)",
+        expected = [:wall_clock,
                     :concurrent_processes,
-                    :"cpu_time(seconds)",
-                    :"virtual_memory(kB)",
-                    :"resident_memory(kB)",
+                    :cpu_time,
+                    :virtual_memory,
+                    :resident_memory,
                     :bytes_read,
                     :bytes_written,
                     :workdir_number_files_dirs,
-                    :"workdir_footprint(MB)"]
+                    :workdir_footprint]
         assert_equal expected, @r.resources
       end
     end
