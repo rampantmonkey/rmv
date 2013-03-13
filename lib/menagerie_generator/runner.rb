@@ -95,10 +95,14 @@ module MenagerieGenerator
 
       def gnuplot
         output = nil
-        IO::popen "gnuplot", "w+" do |io|
-          yield io
-          io.close_write
-          output = io.read
+        begin
+          IO::popen "gnuplot", "w+" do |io|
+            yield io
+            io.close_write
+            output = io.read
+          end
+        rescue ENOENT => e
+          puts "gnuplot not installed"
         end
         output
       end
