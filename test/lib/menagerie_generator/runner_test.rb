@@ -24,5 +24,20 @@ module MenagerieGenerator
         end
       end
     end
+
+    context "run" do
+      setup do
+        @r = Runner.new ["test/data/blast", "a"]
+        @r.run
+      end
+
+      should "find 9 time series files" do
+        assert_equal 9, @r.time_series.size
+      end
+
+      should "find 9 summary files" do
+        assert_equal 9, @r.summaries.size
+      end
+    end
   end
 end

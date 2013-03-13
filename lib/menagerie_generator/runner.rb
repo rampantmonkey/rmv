@@ -2,13 +2,24 @@ require_relative '../menagerie_generator'
 
 module MenagerieGenerator
   class Runner
-    attr_reader :source, :destination
+    attr_reader :source, :destination, :time_series, :summaries
 
     def initialize argv
       process_arguments argv
     end
 
     def run
+      time_series = []
+      summaries = []
+      Pathname.glob(@source + "log-rule*") do |path|
+        if path.to_s.match /.*summary/
+          summaries << path
+        else
+          time_series << path
+        end
+      end
+      @time_series = time_series
+      @summaries = summaries
     end
 
     private
