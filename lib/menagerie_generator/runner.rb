@@ -53,6 +53,7 @@ module MenagerieGenerator
 
       def create_histograms
         @maximums = find_maximums
+        write_maximum_resources
       end
 
       def find_maximums
@@ -66,6 +67,15 @@ module MenagerieGenerator
           end
         end
         max
+      end
+
+      def write_maximum_resources
+        @maximums.each do |m|
+          path = @destination + m.first.to_s
+          File.open(path, 'w:UTF-8') do |f|
+            m.last.each { |line| f.puts line }
+          end
+        end
       end
   end
 end

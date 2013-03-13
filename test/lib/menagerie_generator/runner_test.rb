@@ -27,7 +27,7 @@ module MenagerieGenerator
 
     context "run" do
       setup do
-        @r = Runner.new ["test/data/blast", "a"]
+        @r = Runner.new ["test/data/blast", "/tmp"]
         @r.run
       end
 
