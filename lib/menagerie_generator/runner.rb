@@ -6,7 +6,7 @@ require 'open3'
 
 module MenagerieGenerator
   class Runner
-    attr_reader :source, :destination, :time_series, :summaries, :resources, :maximums
+    attr_reader :source, :destination, :time_series, :summaries, :resources, :maximums, :workspace
 
     def initialize argv
       process_arguments argv
@@ -22,6 +22,8 @@ module MenagerieGenerator
       def process_arguments args
         fail ::ArgumentError unless args.length > 1
         @source = Pathname.new args[0]
+        @workspace = Pathname.new "/tmp/menagerie-generator/"
+        @workspace.mkpath
         @destination = Pathname.new args[1]
         @destination.mkpath unless @destination.exist?
       end
@@ -79,7 +81,7 @@ module MenagerieGenerator
 
       def write_maximum_values
         @maximums.each do |m|
-          path = @destination + m.first.to_s
+          path = workspace + m.first.to_s
           File.open(path, 'w:UTF-8') do |f|
             m.last.each do |line|
               line = yield( m.first, line) if block_given?
@@ -94,7 +96,7 @@ module MenagerieGenerator
           width = s.first
           height = s.last
           @resources.each do |r|
-            gnuplot {|io| io.puts histogram_format(width: width, height: height, resource: r, data_path: @destination+r.to_s)}
+            gnuplot {|io| io.puts histogram_format(width: width, height: height, resource: r, data_path: workspace+r.to_s)}
           end
         end
       end
