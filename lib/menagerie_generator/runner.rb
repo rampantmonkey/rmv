@@ -14,8 +14,8 @@ module MenagerieGenerator
     private
       def process_arguments args
         fail ::ArgumentError unless args.length > 1
-        @source = args[0]
-        @destination = args[1]
+        @source = Pathname.new args[0]
+        @destination = Pathname.new args[1]
       end
   end
 end

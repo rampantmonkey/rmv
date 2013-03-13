@@ -5,14 +5,14 @@ module MenagerieGenerator
     context "Initialization" do
       should "set source and destination" do
         r = Runner.new ["a", "b"]
-        assert_equal "a", r.source
-        assert_equal "b", r.destination
+        assert_equal "a", r.source.to_s
+        assert_equal "b", r.destination.to_s
       end
 
       should "gracefully discard extra arguments" do
         r = Runner.new ["a", "b", "c"]
-        assert_equal "a", r.source
-        assert_equal "b", r.destination
+        assert_equal "a", r.source.to_s
+        assert_equal "b", r.destination.to_s
       end
 
       should "throw an error" do
