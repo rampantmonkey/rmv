@@ -101,7 +101,7 @@ module MenagerieGenerator
             io.close_write
             output = io.read
           end
-        rescue ENOENT => e
+        rescue ::ENOENT => e
           puts "gnuplot not installed"
         end
         output
