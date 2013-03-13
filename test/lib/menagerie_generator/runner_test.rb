@@ -14,6 +14,15 @@ module MenagerieGenerator
         assert_equal "a", r.source
         assert_equal "b", r.destination
       end
+
+      should "throw an error" do
+        assert_raise ArgumentError do
+          r = Runner.new []
+        end
+        assert_raise ArgumentError do
+          r = Runner.new ["a"]
+        end
+      end
     end
   end
 end
