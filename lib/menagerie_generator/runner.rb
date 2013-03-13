@@ -2,6 +2,7 @@ require_relative '../menagerie_generator'
 
 require 'pathname'
 require 'yaml'
+require 'open3'
 
 module MenagerieGenerator
   class Runner
@@ -100,10 +101,9 @@ module MenagerieGenerator
       def gnuplot
         output = nil
         begin
-          IO::popen "gnuplot", "w+" do |io|
-            yield io
-            io.close_write
-            output = io.read
+          Open3::popen3 "gnuplot" do |i, o, e, t|
+            yield i
+            i.close_write
           end
         rescue Errno::ENOENT => e
           puts "gnuplot not installed"
