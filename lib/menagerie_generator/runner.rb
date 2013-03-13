@@ -1,10 +1,11 @@
 require_relative '../menagerie_generator'
 
 require 'pathname'
+require 'yaml'
 
 module MenagerieGenerator
   class Runner
-    attr_reader :source, :destination, :time_series, :summaries, :resources
+    attr_reader :source, :destination, :time_series, :summaries, :resources, :maximums
 
     def initialize argv
       process_arguments argv
@@ -13,6 +14,7 @@ module MenagerieGenerator
     def run
       find_files
       find_resources
+      create_histograms
     end
 
     private
@@ -48,6 +50,22 @@ module MenagerieGenerator
       def translate_resource_name name
         name.gsub /clock/, 'time'
       end
+
+      def create_histograms
+        @maximums = find_maximums
+      end
+
+      def find_maximums
+        max = Hash[ @resources.map {|r| [r,[]] }]
+        @summaries.each do |s|
+          summary = YAML.load_file s
+          summary.each do |k,v|
+            k = k.gsub /max_/, ''
+            k = k.to_sym
+            max[k].push v if max.has_key? k
+          end
+        end
+        max
       end
   end
 end

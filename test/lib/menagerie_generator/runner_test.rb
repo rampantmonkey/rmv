@@ -51,6 +51,11 @@ module MenagerieGenerator
                     :workdir_footprint]
         assert_equal expected, @r.resources
       end
+
+      should "find maximum values from summary files" do
+        expected_size = 9
+        @r.maximums.each { |m| assert_equal 9, m.last.size, "#{m} does not have the expected number of results" }
+      end
     end
   end
 end
