@@ -29,3 +29,11 @@ The summary file contains some general information of the process (start time, e
     workdir_number_files_dirs:    	102
     workdir_footprint:            	8550.064460
 
+# Contributing
+
+ [![Code Climate](https://codeclimate.com/github/rampantmonkey/menagerie-generator.png)](https://codeclimate.com/github/rampantmonkey/menagerie-generator)
+ [![Build Status](https://travis-ci.org/rampantmonkey/menagerie-generator.png?branch=master)](https://travis-ci.org/rampantmonkey/menagerie-generator)
+
+Any design improvements are more than welcome. Just submit a pull request with the changes.
+
+
