@@ -55,7 +55,6 @@ module MenagerieGenerator
           result =  "" unless result
           result
         end
-        puts @units.inspect
         @resources = header.map {|h| h.gsub(/\(.*\)/, '')}
         @resources.map! {|r| translate_resource_name r}
         @resources.map! {|r| r.to_sym}
