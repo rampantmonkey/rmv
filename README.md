@@ -29,6 +29,12 @@ The summary file contains some general information of the process (start time, e
     workdir_number_files_dirs:    	102
     workdir_footprint:            	8550.064460
 
+# Dependencies
+
+`gnuplot 4.6 patchlevel 1`
+
+Older or newer versions of `gnuplot` may work, but are untested.
+
 # Contributing
 
  [![Build Status](https://travis-ci.org/rampantmonkey/menagerie-generator.png?branch=master)](https://travis-ci.org/rampantmonkey/menagerie-generator)
