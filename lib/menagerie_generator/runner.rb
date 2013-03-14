@@ -148,7 +148,6 @@ module MenagerieGenerator
         binwidth = max/40 unless max <= 40
         %Q{set terminal png size #{width},#{height}
         set bmargin 4
-        set style line 1
         unset key
 
         set ylabel "Frequency"
@@ -162,7 +161,7 @@ module MenagerieGenerator
         set xtics right rotate by -45
         set xlabel "#{resource.to_s}#{unit}" offset 0,-2 character
         set bmargin 7
-        plot "#{data_path.to_s}" using (bin(\$1,binwidth)):(1.0) smooth freq with boxes
+        plot "#{data_path.to_s}" using (bin(\$1,binwidth)):(1.0) smooth freq w boxes lc rgb"#5aabbc"
         }
       end
   end
