@@ -118,7 +118,6 @@ module MenagerieGenerator
         max = scale_maximum resource.to_s, @maximums[resource].max
         binwidth = 1
         binwidth = max/40 unless max <= 40
-        puts "#{resource}: #{binwidth}"
         %Q{set terminal png size #{width},#{height}
         set bmargin 4
         set style line 1
@@ -132,7 +131,9 @@ module MenagerieGenerator
         bin(x,width)=width*floor(x/width)
         set yrange [0:*]
         set xrange [0:*]
-        set xlabel "#{resource.to_s}"
+        set xtics right rotate by -45
+        set xlabel "#{resource.to_s}" offset 0,-2 character
+        set bmargin 7
         plot "#{data_path.to_s}" using (bin(\$1,binwidth)):(1.0) smooth freq with boxes
         }
       end
