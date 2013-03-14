@@ -6,7 +6,7 @@ require 'open3'
 
 module MenagerieGenerator
   class Runner
-    attr_reader :source, :destination, :time_series, :summaries, :resources, :maximums, :workspace
+    attr_reader :source, :destination, :time_series, :summaries, :resources, :maximums, :workspace, :name
 
     def initialize argv
       process_arguments argv
@@ -27,6 +27,8 @@ module MenagerieGenerator
         @workspace.mkpath
         @destination = Pathname.new args[1]
         @destination.mkpath unless @destination.exist?
+        @name = "noname"
+        @name = args[2] if args.length > 2
       end
 
       def find_files
@@ -99,6 +101,8 @@ module MenagerieGenerator
         <meta charset="UTF-8">
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
         <link rel="stylesheet" type="text/css" media="screen, projection" href="css/screen.css" />
+        <title>#{name} Workflow</title>
+        <h1>#{name} Workflow</h1>
         INDEX
         sizes.sort_by! {|s| s.first}
         @resources.each do |r|
