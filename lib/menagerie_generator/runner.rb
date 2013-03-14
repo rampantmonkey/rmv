@@ -6,7 +6,7 @@ require 'open3'
 
 module MenagerieGenerator
   class Runner
-    attr_reader :source, :destination, :time_series, :summaries, :resources, :maximums, :workspace, :name
+    attr_reader :source, :destination, :time_series, :summaries, :resources, :maximums, :workspace, :name, :units
 
     def initialize argv
       process_arguments argv
@@ -49,6 +49,13 @@ module MenagerieGenerator
         header = time_series.first.open(&:readline).chomp
         header = header[1..-1]
         header = header.split /\s+/
+        @units = header.map do |h|
+          result = h.scan(/\((.*)\)/)[0]
+          result = result.first if result
+          result =  "" unless result
+          result
+        end
+        puts @units.inspect
         @resources = header.map {|h| h.gsub(/\(.*\)/, '')}
         @resources.map! {|r| translate_resource_name r}
         @resources.map! {|r| r.to_sym}
@@ -136,6 +143,8 @@ module MenagerieGenerator
 
       def histogram_format(width: 600, height: 600, resource: "", data_path: "/tmp")
         max = scale_maximum resource.to_s, @maximums[resource].max
+        unit = @units[@resources.index(resource)]
+        unit = "(#{unit})" unless unit == ""
         binwidth = 1
         binwidth = max/40 unless max <= 40
         %Q{set terminal png size #{width},#{height}
@@ -152,7 +161,7 @@ module MenagerieGenerator
         set yrange [0:*]
         set xrange [0:*]
         set xtics right rotate by -45
-        set xlabel "#{resource.to_s}" offset 0,-2 character
+        set xlabel "#{resource.to_s}#{unit}" offset 0,-2 character
         set bmargin 7
         plot "#{data_path.to_s}" using (bin(\$1,binwidth)):(1.0) smooth freq with boxes
         }
