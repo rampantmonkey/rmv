@@ -16,6 +16,7 @@ module MenagerieGenerator
       find_files
       find_resources
       create_histograms
+      make_index [[600,600],[250,250]]
     end
 
     private
@@ -89,6 +90,21 @@ module MenagerieGenerator
             end
           end
         end
+      end
+
+      def make_index sizes=[[600,600]]
+        path = destination + "index.html"
+        output = <<-INDEX
+        <!doctype html>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+        <link rel="stylesheet" type="text/css" media="screen, projection" href="css/screen.css" />
+        INDEX
+        sizes.sort_by! {|s| s.first}
+        @resources.each do |r|
+          output << %Q{<a href="#{r.to_s}_#{sizes.last.first}x#{sizes.last.last}_hist.png"><img src="#{r.to_s}_#{sizes.first.first}x#{sizes.first.last}_hist.png" /></a>\n}
+        end
+        path.open("w:UTF-8") { |f| f.puts output }
       end
 
       def build_histograms sizes=[[600,600]]
