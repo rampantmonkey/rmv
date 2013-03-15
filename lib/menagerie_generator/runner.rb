@@ -24,7 +24,10 @@ module MenagerieGenerator
     private
       def find_start_time
         summary =  YAML.load_file summaries.first
-        summary["start"]
+        lowest = summary["start"]
+        summary = YAML.load_file summaries.last
+        highest = summary["start"]
+        lowest < highest ? lowest : highest
       end
 
       def make_combined_time_series
@@ -71,7 +74,7 @@ module MenagerieGenerator
           end
         end
         @time_series = time_series
-        @summaries = summaries
+        @summaries = summaries.sort
       end
 
       def find_resources
