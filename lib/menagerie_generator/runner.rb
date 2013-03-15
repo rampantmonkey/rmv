@@ -155,7 +155,7 @@ module MenagerieGenerator
         unit = "(#{unit})" unless unit == ""
         binwidth = 1
         binwidth = max/40 unless max <= 40
-        %Q{set terminal png size #{width},#{height}
+        %Q{set terminal png transparent size #{width},#{height}
         set bmargin 4
         unset key
 
