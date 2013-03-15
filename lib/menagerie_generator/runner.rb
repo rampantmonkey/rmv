@@ -186,7 +186,7 @@ module MenagerieGenerator
       def histogram_format(width: 600, height: 600, resource: "", data_path: "/tmp")
         max = scale_maximum resource.to_s, @maximums[resource].max
         unit = @units[@resources.index(resource)]
-        unit = "(#{unit})" unless unit == ""
+        unit = " (#{unit})" unless unit == ""
         binwidth = 1
         binwidth = max/40 unless max <= 40
         %Q{set terminal png transparent size #{width},#{height}
