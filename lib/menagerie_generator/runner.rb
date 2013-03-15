@@ -26,9 +26,14 @@ module MenagerieGenerator
         @workspace = Pathname.new "/tmp/menagerie-generator/"
         @workspace.mkpath
         @destination = Pathname.new args[1]
-        @destination.mkpath unless @destination.exist?
+        @top_level_destination = @destination
         @name = "noname"
-        @name = args[2] if args.length > 2
+        if args.length > 2
+          @name = args[2]
+          @destination = @destination + @name.downcase
+        end
+        @destination.mkpath unless @destination.exist?
+      end
       end
 
       def find_files

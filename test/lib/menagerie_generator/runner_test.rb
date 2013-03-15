@@ -9,10 +9,16 @@ module MenagerieGenerator
         assert_equal "b", r.destination.to_s
       end
 
-      should "gracefully discard extra arguments" do
+      should "append name to destination" do
         r = Runner.new ["a", "b", "c"]
         assert_equal "a", r.source.to_s
-        assert_equal "b", r.destination.to_s
+        assert_equal "b/c", r.destination.to_s
+      end
+
+      should "gracefully discard extra arguments" do
+        r = Runner.new ["a", "b", "c", "d"]
+        assert_equal "a", r.source.to_s
+        assert_equal "b/c", r.destination.to_s
       end
 
       should "throw an error" do
