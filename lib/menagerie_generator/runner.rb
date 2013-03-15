@@ -31,6 +31,10 @@ module MenagerieGenerator
       end
 
       def make_combined_time_series
+        usage = find_aggregate_usage
+      end
+
+      def find_aggregate_usage
         start = find_start_time.to_i
         aggregate_usage = {}
         @resources.each {|r| aggregate_usage[r] = Hash.new 0}
@@ -47,8 +51,6 @@ module MenagerieGenerator
           end
         end
         aggregate_usage
-      end
-
       end
 
       def process_arguments args
