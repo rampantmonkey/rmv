@@ -115,7 +115,7 @@ module MenagerieGenerator
         <!doctype html>
         <meta charset="UTF-8">
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-        <link rel="stylesheet" type="text/css" media="screen, projection" href="css/screen.css" />
+        <link rel="stylesheet" type="text/css" media="screen, projection" href="../css/style.css" />
         <title>#{name} Workflow</title>
         <h1>#{name} Workflow</h1>
         INDEX
