@@ -31,8 +31,8 @@ module MenagerieGenerator
       end
 
       def make_combined_time_series
-        start = find_start_time
         cpu_aggregate_usage = Hash.new 0
+        start = find_start_time.to_i
         @time_series.each do |s|
           lines = s.open.each
           lines.each do |l|
