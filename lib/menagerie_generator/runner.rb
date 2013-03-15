@@ -33,6 +33,7 @@ module MenagerieGenerator
       def make_combined_time_series
         usage = find_aggregate_usage
         write_usage usage
+        plot_time_series_summaries [[1250,500]]
       end
 
       def write_usage usage
@@ -47,6 +48,33 @@ module MenagerieGenerator
           path.open("w:UTF-8"){|f| f.puts output}
         end
       end
+
+      def plot_time_series_summaries sizes
+        sizes.each do |s|
+          width = s.first
+          height = s.last
+          @resources.each do |r|
+            gnuplot {|io| io.puts time_series_format(width: width, height: height, resource: r, data_path: workspace+"aggregate_#{r.to_s}")}
+          end
+        end
+      end
+
+      def time_series_format(width: 1250, height: 500, resource: "", data_path: "/tmp")
+        unit = @units[@resources.index(resource)]
+        unit = " (#{unit})" unless unit == ""
+        %Q{set terminal png transparent size #{width},#{height}
+        set bmargin 4
+        unset key
+        set xlabel "Time (seconds)" offset 0,-2 character
+        set ylabel "#{resource.to_s}#{unit}" offset 0,-2 character
+        set output "#{@destination + resource.to_s}_#{width}x#{height}_aggregate.png"
+        set yrange [0:*]
+        set xrange [0:*]
+        set xtics right rotate by -45
+        set bmargin 7
+        plot "#{data_path.to_s}" using 1:2 w lines lw 5 lc rgb"#465510"
+        plot "#{data_path.to_s}" using (bin(\$1,binwidth)):(1.0) smooth freq w boxes lc rgb"#5aabbc"
+        }
       end
 
       def find_aggregate_usage
