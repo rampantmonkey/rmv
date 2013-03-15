@@ -117,12 +117,14 @@ module MenagerieGenerator
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
         <link rel="stylesheet" type="text/css" media="screen, projection" href="../css/style.css" />
         <title>#{name} Workflow</title>
+        <div class="content">
         <h1>#{name} Workflow</h1>
         INDEX
         sizes.sort_by! {|s| s.first}
         @resources.each do |r|
           output << %Q{<a href="#{r.to_s}_#{sizes.last.first}x#{sizes.last.last}_hist.png"><img src="#{r.to_s}_#{sizes.first.first}x#{sizes.first.last}_hist.png" /></a>\n}
         end
+        output << "</div>"
         path.open("w:UTF-8") { |f| f.puts output }
       end
 
