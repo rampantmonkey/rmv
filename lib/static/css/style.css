@@ -9,3 +9,9 @@ html, body, div, span, h1, h2, h3, h4, h5, h6, p, a, img, table, td, th, tr, sec
 }
 
 body { background: #f6f6f6 url('../img/subtle_grunge.png') repeat; }
+
+.content {
+  margin: 0 auto;
+  max-width: 1270px;
+  width: 90%;
+}
