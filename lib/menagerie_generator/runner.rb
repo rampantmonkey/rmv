@@ -191,9 +191,26 @@ module MenagerieGenerator
         <meta charset="UTF-8">
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
         <link rel="stylesheet" type="text/css" media="screen, projection" href="../css/style.css" />
+        <script src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js\"></script>
+        <script src=\"../js/slides.min.jquery.js\"></script>
+        <script>\n \$(function(){\n \$('#slides').slides({\n preload: true,\n });\n });\n </script>
         <title>#{name} Workflow</title>
         <div class="content">
         <h1>#{name} Workflow</h1>
+        <section class="summary">
+          <div id="slides">
+            <div class="slides_container">
+              <div class="slide"><div class="item"><img src="makeflowlog.png" /></div></div>
+              <div class="slide"><div class="item"><img src="cpu.png" /></div></div>
+              <div class="slide"><div class="item"><img src="proc.png" /></div></div>
+              <div class="slide"><div class="item"><img src="memory.png" /></div></div>
+              <div class="slide"><div class="item"><img src="disk.png" /></div></div>
+              <div class="slide"><div class="item"><img src="io.png" /></div></div>
+            </div>
+            <a href=\"#\" class=\"prev\"><img src=\"../img/arrow-prev.png\" width=\"24\" height=\"43\" alt=\"Arrow Prev\"></a>
+            <a href=\"#\" class=\"next\"><img src=\"../img/arrow-next.png\" width=\"24\" height=\"43\" alt=\"Arrow Next\"></a>
+          </div>
+        </section>
         INDEX
         sizes.sort_by! {|s| s.first}
         @resources.each do |r|
