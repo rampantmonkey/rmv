@@ -21,6 +21,11 @@ module MenagerieGenerator
     end
 
     private
+      def find_start_time
+        summary =  YAML.load_file summaries.first
+        summary["start"]
+      end
+
       def process_arguments args
         fail ::ArgumentError unless args.length > 1
         @source = Pathname.new args[0]
