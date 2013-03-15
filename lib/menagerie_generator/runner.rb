@@ -144,7 +144,7 @@ module MenagerieGenerator
             i.close_write
           end
         rescue Errno::ENOENT => e
-          puts "gnuplot not installed"
+          STDERR.puts "gnuplot not installed"
         end
         output
       end
