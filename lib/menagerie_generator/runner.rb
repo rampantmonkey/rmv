@@ -31,17 +31,24 @@ module MenagerieGenerator
       end
 
       def make_combined_time_series
-        cpu_aggregate_usage = Hash.new 0
         start = find_start_time.to_i
+        aggregate_usage = {}
+        @resources.each {|r| aggregate_usage[r] = Hash.new 0}
         @time_series.each do |s|
           lines = s.open.each
           lines.each do |l|
             unless l.match /^#/
               data = l.split /\s+/
-              cpu_aggregate_usage[data.first.to_i-start.to_i] = data[2]
+              adjusted_start = data[0].to_i - start
+              @resources.each_with_index do |r, i|
+                aggregate_usage[r][adjusted_start] += data[i].to_i unless i == 0
+              end
             end
           end
         end
+        aggregate_usage
+      end
+
       end
 
       def process_arguments args
