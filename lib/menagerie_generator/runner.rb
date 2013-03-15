@@ -16,6 +16,7 @@ module MenagerieGenerator
       find_files
       find_resources
       create_histograms
+      make_combined_time_series
       make_index [[600,600],[250,250]]
       copy_static_files
     end
@@ -24,6 +25,20 @@ module MenagerieGenerator
       def find_start_time
         summary =  YAML.load_file summaries.first
         summary["start"]
+      end
+
+      def make_combined_time_series
+        start = find_start_time
+        cpu_aggregate_usage = Hash.new 0
+        @time_series.each do |s|
+          lines = s.open.each
+          lines.each do |l|
+            unless l.match /^#/
+              data = l.split /\s+/
+              cpu_aggregate_usage[data.first.to_i-start.to_i] = data[2]
+            end
+          end
+        end
       end
 
       def process_arguments args
