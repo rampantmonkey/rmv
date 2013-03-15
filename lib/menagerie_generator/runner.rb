@@ -17,6 +17,7 @@ module MenagerieGenerator
       find_resources
       create_histograms
       make_index [[600,600],[250,250]]
+      copy_static_files
     end
 
     private
@@ -34,6 +35,9 @@ module MenagerieGenerator
         end
         @destination.mkpath unless @destination.exist?
       end
+
+      def copy_static_files
+        `cp -r lib/static/* #{@top_level_destination}`
       end
 
       def find_files
