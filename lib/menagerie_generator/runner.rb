@@ -17,7 +17,7 @@ module MenagerieGenerator
       find_resources
       create_histograms
       make_combined_time_series
-      make_index [[600,600],[250,250]]
+      make_index [[1250,500]], [[600,600],[250,250]]
       copy_static_files
     end
 
@@ -184,7 +184,7 @@ module MenagerieGenerator
         end
       end
 
-      def make_index sizes=[[600,600]]
+      def make_index summary_sizes = [[1250, 500]], histogram_sizes=[[600,600]]
         path = destination + "index.html"
         output = <<-INDEX
         <!doctype html>
@@ -201,20 +201,26 @@ module MenagerieGenerator
           <div id="slides">
             <div class="slides_container">
               <div class="slide"><div class="item"><img src="makeflowlog.png" /></div></div>
-              <div class="slide"><div class="item"><img src="cpu.png" /></div></div>
-              <div class="slide"><div class="item"><img src="proc.png" /></div></div>
-              <div class="slide"><div class="item"><img src="memory.png" /></div></div>
-              <div class="slide"><div class="item"><img src="disk.png" /></div></div>
-              <div class="slide"><div class="item"><img src="io.png" /></div></div>
-            </div>
+        INDEX
+
+        summary_sizes.sort_by!{|s| s.first}
+        summary_large = summary_sizes.last
+        resources.each_with_index do |r, i|
+          output << %Q{ <div class="slide"><div class="item"><img src="#{r.to_s}_#{summary_large.first}x#{summary_large.last}_aggregate.png" /></div></div>\n} unless i == 0
+        end
+
+        output << <<-INDEX
+           </div>
             <a href=\"#\" class=\"prev\"><img src=\"../img/arrow-prev.png\" width=\"24\" height=\"43\" alt=\"Arrow Prev\"></a>
             <a href=\"#\" class=\"next\"><img src=\"../img/arrow-next.png\" width=\"24\" height=\"43\" alt=\"Arrow Next\"></a>
           </div>
         </section>
         INDEX
-        sizes.sort_by! {|s| s.first}
+        histogram_sizes.sort_by! {|s| s.first}
+        hist_small = histogram_sizes.first
+        hist_large = histogram_sizes.last
         @resources.each do |r|
-          output << %Q{<a href="#{r.to_s}_#{sizes.last.first}x#{sizes.last.last}_hist.png"><img src="#{r.to_s}_#{sizes.first.first}x#{sizes.first.last}_hist.png" /></a>\n}
+          output << %Q{<a href="#{r.to_s}_#{hist_large.first}x#{hist_large.last}_hist.png"><img src="#{r.to_s}_#{hist_small.first}x#{hist_small.last}_hist.png" /></a>\n}
         end
         output << "</div>"
         path.open("w:UTF-8") { |f| f.puts output }
