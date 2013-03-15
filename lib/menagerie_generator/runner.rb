@@ -32,6 +32,21 @@ module MenagerieGenerator
 
       def make_combined_time_series
         usage = find_aggregate_usage
+        write_usage usage
+      end
+
+      def write_usage usage
+        usage.each do |u|
+          path = workspace + "aggregate_#{u.first.to_s}"
+          output = []
+          u.last.each {|k,v| output << "#{k}\t#{v}"}
+          output.sort_by! do |a|
+            a = a.split(/\t/)
+            a[0].to_i
+          end
+          path.open("w:UTF-8"){|f| f.puts output}
+        end
+      end
       end
 
       def find_aggregate_usage
