@@ -201,7 +201,7 @@ module MenagerieGenerator
         <section class="summary">
           <div id="slides">
             <div class="slides_container">
-              <div class="slide"><div class="item"><img src="makeflowlog.png" /></div></div>
+              <div class="slide"><div class="item"><img src="makeflowlog_1250x500.png" /></div></div>
         INDEX
 
         summary_sizes.sort_by!{|s| s.first}
@@ -267,6 +267,7 @@ module MenagerieGenerator
         end
         summary_data_file = workspace + "summarydata"
         summary_data_file.open("w:UTF-8") { |f| f.puts data }
+        gnuplot {|io| io.puts makeflow_log_format(data_path: summary_data_file.to_s)}
       end
 
       def makeflow_log_format(width: 1250, height: 500, resource: "", data_path: "/tmp")
