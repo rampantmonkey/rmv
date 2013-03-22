@@ -265,6 +265,8 @@ module MenagerieGenerator
             data << "#{time} #{submitted} #{running} #{complete}"
           end
         end
+        summary_data_file = workspace + "summarydata"
+        summary_data_file.open("w:UTF-8") { |f| f.puts data }
       end
 
       def makeflow_log_format(width: 1250, height: 500, resource: "", data_path: "/tmp")
