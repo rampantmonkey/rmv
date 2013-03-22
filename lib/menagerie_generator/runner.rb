@@ -266,6 +266,21 @@ module MenagerieGenerator
           end
         end
       end
+
+      def makeflow_log_format(width: 1250, height: 500, resource: "", data_path: "/tmp")
+        %Q{set terminal png transparent size #{width},#{height}
+        set bmargin 4
+        set xlabel "Time (seconds)" offset 0,-2 character
+        set ylabel "Number of Jobs" offset 0,-2 character
+        set output "#{@destination + 'makeflowlog'}_#{width}x#{height}.png"
+        set xrange [0:*]
+        set yrange [0:*]
+        set xtics right rotate by -45
+        set bmargin 7
+        plot "#{data_path.to_s}" using 1:2 title "submitted" w lines lw 5 lc rgb"#465510", "" using 1:3 title "running" w lines lw 5 lc rgb"#BA6F2E", "" using 1:4 title "complete" w lines lw 5 lc rgb"#AA272F"
+        }
+      end
+
       def histogram_format(width: 600, height: 600, resource: "", data_path: "/tmp")
         max = scale_maximum resource.to_s, @maximums[resource].max
         unit = @units[@resources.index(resource)]
