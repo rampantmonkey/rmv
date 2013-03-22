@@ -53,6 +53,7 @@ module MenagerieGenerator
     def gnuplot_format(width: 1250, height: 500, data_path: "/tmp", output_path: "")
       %Q{set terminal png transparent size #{width},#{height}
       set bmargin 4
+      set key ins left top
       set xlabel "Time (seconds)" offset 0,-2 character
       set ylabel "Number of Jobs" offset 0,-2 character
       set output "#{output_path + 'makeflowlog'}_#{width}x#{height}.png"
