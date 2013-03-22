@@ -252,36 +252,10 @@ module MenagerieGenerator
 
       def plot_makeflow_log log_file
         output_path = destination + 'makeflowlog.png'
-        lines = log_file.open.each
-        start = find_start_time
-        data = []
-        lines.each do |l|
-          unless l.match /^#/
-            l = l.split(' ')
-            time = l[0].to_f/1000000.0 - start
-            submitted = l[5..8].map{|a| a.to_i}.inject(:+)
-            running = l[5]
-            complete = l[6]
-            data << "#{time} #{submitted} #{running} #{complete}"
-          end
-        end
+        mflog = MakeflowLog.from_file log_file
         summary_data_file = workspace + "summarydata"
-        summary_data_file.open("w:UTF-8") { |f| f.puts data }
-        gnuplot {|io| io.puts makeflow_log_format(data_path: summary_data_file.to_s)}
-      end
-
-      def makeflow_log_format(width: 1250, height: 500, resource: "", data_path: "/tmp")
-        %Q{set terminal png transparent size #{width},#{height}
-        set bmargin 4
-        set xlabel "Time (seconds)" offset 0,-2 character
-        set ylabel "Number of Jobs" offset 0,-2 character
-        set output "#{@destination + 'makeflowlog'}_#{width}x#{height}.png"
-        set xrange [0:*]
-        set yrange [0:*]
-        set xtics right rotate by -45
-        set bmargin 7
-        plot "#{data_path.to_s}" using 1:2 title "submitted" w lines lw 5 lc rgb"#465510", "" using 1:3 title "running" w lines lw 5 lc rgb"#BA6F2E", "" using 1:4 title "complete" w lines lw 5 lc rgb"#AA272F"
-        }
+        summary_data_file.open("w:UTF-8") { |f| f.puts mflog }
+        gnuplot {|io| io.puts mflog.gnuplot_format(data_path: summary_data_file, output_path: destination) }
       end
 
       def histogram_format(width: 600, height: 600, resource: "", data_path: "/tmp")
