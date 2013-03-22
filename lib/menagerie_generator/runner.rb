@@ -17,6 +17,7 @@ module MenagerieGenerator
       find_resources
       create_histograms
       make_combined_time_series
+      plot_makeflow_log source + 'Makeflow.makeflowlog'
       make_index [[1250,500]], [[600,600],[250,250]]
       copy_static_files
     end
@@ -249,6 +250,22 @@ module MenagerieGenerator
         output
       end
 
+      def plot_makeflow_log log_file
+        output_path = destination + 'makeflowlog.png'
+        lines = log_file.open.each
+        start = find_start_time
+        data = []
+        lines.each do |l|
+          unless l.match /^#/
+            l = l.split(' ')
+            time = l[0].to_f/1000000.0 - start
+            submitted = l[5..8].map{|a| a.to_i}.inject(:+)
+            running = l[5]
+            complete = l[6]
+            data << "#{time} #{submitted} #{running} #{complete}"
+          end
+        end
+      end
       def histogram_format(width: 600, height: 600, resource: "", data_path: "/tmp")
         max = scale_maximum resource.to_s, @maximums[resource].max
         unit = @units[@resources.index(resource)]
