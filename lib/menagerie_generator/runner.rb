@@ -150,11 +150,11 @@ module MenagerieGenerator
       end
 
       def create_histograms
-        build_histograms [[600,600],[250,250]], 0
         @groups = find_groups
         @grouped_maximums = @groups.map {|g| find_maximums g}
         @groups.each_with_index do |g, i|
           write_maximum_values(@grouped_maximums[i], i){|a, b| scale_maximum a, b}
+          build_histograms [[600,600],[250,250]], i
         end
       end
 
@@ -234,8 +234,12 @@ module MenagerieGenerator
         histogram_sizes.sort_by! {|s| s.first}
         hist_small = histogram_sizes.first
         hist_large = histogram_sizes.last
-        @resources.each do |r|
-          output << %Q{<a href="#{r.to_s}_#{hist_large.first}x#{hist_large.last}_hist.png"><img src="#{r.to_s}_#{hist_small.first}x#{hist_small.last}_hist.png" /></a>\n}
+        @groups.each_with_index do |g, i|
+          output << %Q{\n<hr />\n} if i > 0
+          output << %Q{\n<h2>#{g}</h2>}
+          @resources.each do |r|
+            output << %Q{<a href="group#{i}/#{r.to_s}_#{hist_large.first}x#{hist_large.last}_hist.png"><img src="group#{i}/#{r.to_s}_#{hist_small.first}x#{hist_small.last}_hist.png" /></a>\n}
+          end
         end
         output << "</div>"
         path.open("w:UTF-8") { |f| f.puts output }
