@@ -9,6 +9,10 @@ module MenagerieGenerator
       @destination = destination
     end
 
+    def build sizes=[[600,600]], output=""
+    end
+    def find_groups
+    end
     private
       attr_reader :resources, :summaries, :workspace, :destination
   end
