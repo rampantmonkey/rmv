@@ -13,6 +13,13 @@ module MenagerieGenerator
                  name: "unnamed",
                  workspace: Pathname.new("/tmp/menagerie")}
       parse argv
+      mandatory = [:source, :destination]
+      missing = mandatory.select { |param| config[param].nil? }
+      unless missing.empty?
+        STDERR.puts "Missing options: #{missing.join(', ')}"
+        exit -1
+      end
+    end
     end
 
     def parse argv
