@@ -150,10 +150,12 @@ module MenagerieGenerator
       end
 
       def create_histograms
-        groups = find_groups
-        @grouped_maximums = groups.map {|g| find_maximums g}
-        write_maximum_values(@grouped_maximums.first){|a, b| scale_maximum a, b}
         build_histograms [[600,600],[250,250]], 0
+        @groups = find_groups
+        @grouped_maximums = @groups.map {|g| find_maximums g}
+        @groups.each_with_index do |g, i|
+          write_maximum_values(@grouped_maximums[i], i){|a, b| scale_maximum a, b}
+        end
       end
 
       def find_groups
@@ -183,9 +185,11 @@ module MenagerieGenerator
         value
       end
 
-      def write_maximum_values maximum_list
+      def write_maximum_values maximum_list, index
+        base_path = workspace + "group#{index}"
+        base_path.mkpath
         maximum_list.each do |m|
-          path = workspace + m.first.to_s
+          path = base_path + m.first.to_s
           File.open(path, 'w:UTF-8') do |f|
             m.last.each do |line|
               line = yield( m.first, line) if block_given?
