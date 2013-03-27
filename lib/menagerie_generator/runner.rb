@@ -150,17 +150,30 @@ module MenagerieGenerator
       end
 
       def create_histograms
-        @maximums = find_maximums
+        groups = find_groups
+        grouped_maximums = groups.map {|g| find_maximums g}
+        @maximums = grouped_maximums[1]
         write_maximum_values {|a, b| scale_maximum a, b}
         build_histograms [[600,600],[250,250]]
       end
 
-      def find_maximums
+      def find_groups
+        groups = []
+        @summaries.each do |s|
+          exe = s.executable_name
+          groups << exe unless groups.include? exe
+        end
+        groups
+      end
+
+      def find_maximums group
         max = Hash[ @resources.map {|r| [r,[]] }]
         @summaries.each do |s|
           @resources.each do |r|
-            tmp = s.send r
-            max[r].push tmp
+            if s.executable_name == group
+              tmp = s.send r
+              max[r].push tmp
+            end
           end
         end
         max
