@@ -24,10 +24,11 @@ module MenagerieGenerator
 
     private
       def find_start_time
-        summary =  YAML.load_file summaries.first
-        lowest = summary["start"]
-        summary = YAML.load_file summaries.last
-        highest = summary["start"]
+        summary = Summary.from_file summaries.first
+        puts summary.inspect
+        lowest = summary.start
+        summary = Summary.from_file summaries.last
+        highest = summary.start
         lowest < highest ? lowest : highest
       end
 
