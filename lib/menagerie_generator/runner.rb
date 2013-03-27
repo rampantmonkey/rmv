@@ -24,10 +24,9 @@ module MenagerieGenerator
 
     private
       def find_start_time
-        summary = Summary.from_file summaries.first
-        puts summary.inspect
+        summary = summaries.first
         lowest = summary.start
-        summary = Summary.from_file summaries.last
+        summary = summaries.last
         highest = summary.start
         lowest < highest ? lowest : highest
       end

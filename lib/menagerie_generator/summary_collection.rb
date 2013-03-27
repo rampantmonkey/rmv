@@ -15,11 +15,11 @@ module MenagerieGenerator
     end
 
     def last
-      paths.last
+      Summary.from_file paths.last
     end
 
     def first
-      paths.first
+      Summary.from_file paths.first
     end
 
     private
