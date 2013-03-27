@@ -246,7 +246,7 @@ module MenagerieGenerator
           width = s.first
           height = s.last
           @resources.each do |r|
-            gnuplot {|io| io.puts histogram_format(width: width, height: height, resource: r, data_path: workspace+r.to_s, group: group )}
+            gnuplot {|io| io.puts histogram_format(width: width, height: height, resource: r, data_path: workspace+"group#{group}"+r.to_s, group: group )}
           end
         end
       end
@@ -275,6 +275,9 @@ module MenagerieGenerator
       def histogram_format(width: 600, height: 600, resource: "", data_path: "/tmp", group: 0)
         max = scale_maximum resource.to_s, @grouped_maximums[group][resource].max
         unit = @units[@resources.index(resource)]
+        image_path = @destination + "group#{group}"
+        image_path.mkpath
+        image_path += "#{resource.to_s}_#{width}x#{height}_hist.png"
         unit = " (#{unit})" unless unit == ""
         binwidth = 1
         binwidth = max/40 unless max <= 40
@@ -283,7 +286,7 @@ module MenagerieGenerator
         unset key
 
         set ylabel "Frequency"
-        set output "#{@destination + resource.to_s}_#{width}x#{height}_hist.png"
+        set output "#{image_path}"
         binwidth=#{binwidth}
         set boxwidth binwidth*0.9
         set style fill solid 0.5
