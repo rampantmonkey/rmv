@@ -11,6 +11,7 @@ module MenagerieGenerator
 
     def build sizes=[[600,600]], output=""
     end
+
     def find_groups
       groups = []
       summaries.each do |s|
@@ -53,6 +54,18 @@ module MenagerieGenerator
             end
           end
         end
+      end
+
+      def format_histograms sizes, group
+        formatted = []
+        sizes.each do |s|
+          width = s.first
+          height = s.last
+          resources.each do |r|
+            formatted << gnuplot_format(width: width, height: height, resource: r, data_path: workspace+"group#{group}"+r.to_s, group: group)
+          end
+        end
+        formatted
       end
 
       def gnuplot_format(width: 600, height: 600, resource: "", data_path: "/tmp", group: 0)
