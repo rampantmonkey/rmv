@@ -18,10 +18,21 @@ module MenagerieGenerator
     def parse argv
       OptionParser.new do |opts|
         opts.banner = "Usage:    menagerie [options] "
+        opts.on("-d", "--destination path", String, "Directory in which to place the output") do |d|
+          config[:destination] = Pathname.new d
+        end
         opts.on("-h", "--help", "Show this message") do
           puts opts
           exit
         end
+        opts.on("-s", "--source path", String, "Directory to the log files for visualizing") do |s|
+          puts s
+          config[:source] = Pathname.new s
+        end
+        opts.on("-w", "--workspace path", String, "Directory for storing temporary files. Default: /tmp/menagerie") do
+          config[:workspace] = Pathname.new w
+        end
+
         begin
           argv = ["-h"] if argv.empty?
           opts.parse! argv
