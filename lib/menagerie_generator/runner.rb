@@ -151,10 +151,9 @@ module MenagerieGenerator
 
       def create_histograms
         groups = find_groups
-        grouped_maximums = groups.map {|g| find_maximums g}
-        @maximums = grouped_maximums[1]
-        write_maximum_values {|a, b| scale_maximum a, b}
-        build_histograms [[600,600],[250,250]]
+        @grouped_maximums = groups.map {|g| find_maximums g}
+        write_maximum_values(@grouped_maximums.first){|a, b| scale_maximum a, b}
+        build_histograms [[600,600],[250,250]], 0
       end
 
       def find_groups
@@ -184,8 +183,8 @@ module MenagerieGenerator
         value
       end
 
-      def write_maximum_values
-        @maximums.each do |m|
+      def write_maximum_values maximum_list
+        maximum_list.each do |m|
           path = workspace + m.first.to_s
           File.open(path, 'w:UTF-8') do |f|
             m.last.each do |line|
@@ -238,12 +237,12 @@ module MenagerieGenerator
         path.open("w:UTF-8") { |f| f.puts output }
       end
 
-      def build_histograms sizes=[[600,600]]
+      def build_histograms sizes=[[600,600]], group
         sizes.each do |s|
           width = s.first
           height = s.last
           @resources.each do |r|
-            gnuplot {|io| io.puts histogram_format(width: width, height: height, resource: r, data_path: workspace+r.to_s)}
+            gnuplot {|io| io.puts histogram_format(width: width, height: height, resource: r, data_path: workspace+r.to_s, group: group )}
           end
         end
       end
@@ -269,8 +268,8 @@ module MenagerieGenerator
         gnuplot {|io| io.puts mflog.gnuplot_format(data_path: summary_data_file, output_path: destination) }
       end
 
-      def histogram_format(width: 600, height: 600, resource: "", data_path: "/tmp")
-        max = scale_maximum resource.to_s, @maximums[resource].max
+      def histogram_format(width: 600, height: 600, resource: "", data_path: "/tmp", group: 0)
+        max = scale_maximum resource.to_s, @grouped_maximums[group][resource].max
         unit = @units[@resources.index(resource)]
         unit = " (#{unit})" unless unit == ""
         binwidth = 1
