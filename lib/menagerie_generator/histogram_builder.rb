@@ -10,6 +10,14 @@ module MenagerieGenerator
     end
 
     def build sizes=[[600,600]], output=""
+      groups = find_groups
+      @grouped_maximums = groups.map {|g| find_maximums g}
+      results = []
+      @grouped_maximums.each_with_index do |g, i|
+        write_maximum_values(g, i){|a,b| scale_maximum a, b}
+        results.concat(format_histograms sizes, i)
+      end
+      results
     end
 
     def find_groups

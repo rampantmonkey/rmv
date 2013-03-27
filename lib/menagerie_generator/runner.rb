@@ -137,13 +137,10 @@ module MenagerieGenerator
       end
 
       def create_histograms
-        @groups = find_groups
-        @grouped_maximums = @groups.map {|g| find_maximums g}
-        @groups.each_with_index do |g, i|
-          write_maximum_values(@grouped_maximums[i], i){|a, b| scale_maximum a, b}
-          build_histograms [[600,600],[250,250]], i
-        end
-      end
+        builder = HistogramBuilder.new resources, summaries, workspace, destination
+        @groups = builder.find_groups
+        builder.build([[600,600],[250,250]]).map do |b|
+          gnuplot { |io| io.puts b }
         end
       end
 
@@ -191,16 +188,6 @@ module MenagerieGenerator
         end
         output << "</div>"
         path.open("w:UTF-8") { |f| f.puts output }
-      end
-
-      def build_histograms sizes=[[600,600]], group
-        sizes.each do |s|
-          width = s.first
-          height = s.last
-          @resources.each do |r|
-            gnuplot {|io| io.puts histogram_format(width: width, height: height, resource: r, data_path: workspace+"group#{group}"+r.to_s, group: group )}
-          end
-        end
       end
 
       def gnuplot
