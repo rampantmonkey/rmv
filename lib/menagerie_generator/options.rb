@@ -20,6 +20,9 @@ module MenagerieGenerator
         exit -1
       end
     end
+
+    def method_missing m, *a, &b
+      config.fetch(m){ super}
     end
 
     def parse argv
