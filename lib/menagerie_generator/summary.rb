@@ -15,6 +15,10 @@ module MenagerieGenerator
       @contents = translate_keys contents
     end
 
+    def executable_name
+      contents.fetch(:command).split(' ').first
+    end
+
     private
       def method_missing m, *a, &b
         contents.fetch(m) { super }
