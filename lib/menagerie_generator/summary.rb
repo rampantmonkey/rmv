@@ -12,12 +12,21 @@ module MenagerieGenerator
     end
 
     def initialize contents
-      @contents = contents
+      @contents = translate_keys contents
     end
 
     private
       def method_missing m, *a, &b
-        contents.fetch(m.to_s) { super }
+        contents.fetch(m) { super }
+      end
+
+      def translate_keys h
+        result = Hash.new
+        h.each do |k,v|
+          new_key = k.gsub /max_/, ''
+          result[new_key.to_sym] = v
+        end
+        result
       end
 
       def contents
