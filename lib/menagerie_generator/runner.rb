@@ -136,10 +136,6 @@ module MenagerieGenerator
         @resources = Resources.new header
       end
 
-      def translate_resource_name name
-        name.gsub /clock/, 'time'
-      end
-
       def create_histograms
         @groups = find_groups
         @grouped_maximums = @groups.map {|g| find_maximums g}
