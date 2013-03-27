@@ -25,6 +25,9 @@ module MenagerieGenerator
           puts opts
           exit
         end
+        opts.on("-n", "--name name", String, "Set the name of the workflow") do |n|
+          config[:name] = n
+        end
         opts.on("-s", "--source path", String, "Directory to the log files for visualizing") do |s|
           puts s
           config[:source] = Pathname.new s
