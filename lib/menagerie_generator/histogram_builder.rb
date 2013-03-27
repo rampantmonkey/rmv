@@ -41,6 +41,20 @@ module MenagerieGenerator
         value
       end
 
+      def write_maximum_values maximum_list, index
+        base_path = workspace + "group#{index}"
+        base_path.mkpath
+        maximum_list.each do |m|
+          path = base_path + m.first.name.to_s
+          File.open(path, 'w:UTF-8') do |f|
+            m.last.each do |line|
+              line = yield( m.first.name, line) if block_given?
+              f.puts line
+            end
+          end
+        end
+      end
+
       def gnuplot_format(width: 600, height: 600, resource: "", data_path: "/tmp", group: 0)
         max = scale_maximum resource.name.to_s, @grouped_maximums[group][resource].max
         unit = resource.unit

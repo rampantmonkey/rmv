@@ -144,17 +144,6 @@ module MenagerieGenerator
           build_histograms [[600,600],[250,250]], i
         end
       end
-      def write_maximum_values maximum_list, index
-        base_path = workspace + "group#{index}"
-        base_path.mkpath
-        maximum_list.each do |m|
-          path = base_path + m.first.name.to_s
-          File.open(path, 'w:UTF-8') do |f|
-            m.last.each do |line|
-              line = yield( m.first.name, line) if block_given?
-              f.puts line
-            end
-          end
         end
       end
 
