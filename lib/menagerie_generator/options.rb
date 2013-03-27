@@ -25,6 +25,9 @@ module MenagerieGenerator
     def parse argv
       OptionParser.new do |opts|
         opts.banner = "Usage:    menagerie [options] "
+        opts.on("-D", "--debug", "Keep intermediate files and produce more verbose output") do
+          config[:debug] = true
+        end
         opts.on("-d", "--destination path", String, "Directory in which to place the output") do |d|
           config[:destination] = Pathname.new d
         end
