@@ -22,7 +22,7 @@ module MenagerieGenerator
     end
 
     def method_missing m, *a, &b
-      config.fetch(m){ super}
+      @config.fetch(m){ super }
     end
 
     def parse argv
@@ -32,7 +32,7 @@ module MenagerieGenerator
           config[:debug] = true
         end
         opts.on("-d", "--destination path", String, "Directory in which to place the output") do |d|
-          config[:destination] = Pathname.new d
+          config[:destination] = Pathname.new(d).expand_path
         end
         opts.on("-h", "--help", "Show this message") do
           puts opts
@@ -42,11 +42,10 @@ module MenagerieGenerator
           config[:name] = n
         end
         opts.on("-s", "--source path", String, "Directory to the log files for visualizing") do |s|
-          puts s
-          config[:source] = Pathname.new s
+          config[:source] = Pathname.new(s).expand_path
         end
         opts.on("-w", "--workspace path", String, "Directory for storing temporary files. Default: /tmp/menagerie") do
-          config[:workspace] = Pathname.new w
+          config[:workspace] = Pathname.new(w).expand_path
         end
 
         begin
