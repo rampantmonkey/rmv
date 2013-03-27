@@ -55,13 +55,13 @@ module MenagerieGenerator
           width = s.first
           height = s.last
           @resources.each do |r|
-            gnuplot {|io| io.puts time_series_format(width: width, height: height, resource: r, data_path: workspace+"aggregate_#{r.to_s}")}
+            gnuplot {|io| io.puts time_series_format(width: width, height: height, resource: r, data_path: workspace+"aggregate_#{r.name.to_s}")}
           end
         end
       end
 
       def time_series_format(width: 1250, height: 500, resource: "", data_path: "/tmp")
-        unit = @units[@resources.index(resource)]
+        unit = resource.unit
         unit = " (#{unit})" unless unit == ""
         %Q{set terminal png transparent size #{width},#{height}
         set bmargin 4
@@ -133,16 +133,7 @@ module MenagerieGenerator
       def find_resources
         header = time_series.first.open(&:readline).chomp
         header = header[1..-1]
-        header = header.split /\s+/
-        @units = header.map do |h|
-          result = h.scan(/\((.*)\)/)[0]
-          result = result.first if result
-          result =  "" unless result
-          result
-        end
-        @resources = header.map {|h| h.gsub(/\(.*\)/, '')}
-        @resources.map! {|r| translate_resource_name r}
-        @resources.map! {|r| r.to_sym}
+        @resources = Resources.new header
       end
 
       def translate_resource_name name
@@ -172,7 +163,7 @@ module MenagerieGenerator
         @summaries.each do |s|
           @resources.each do |r|
             if s.executable_name == group
-              tmp = s.send r
+              tmp = s.send r.name.to_sym
               max[r].push tmp
             end
           end
@@ -189,10 +180,10 @@ module MenagerieGenerator
         base_path = workspace + "group#{index}"
         base_path.mkpath
         maximum_list.each do |m|
-          path = base_path + m.first.to_s
+          path = base_path + m.first.name.to_s
           File.open(path, 'w:UTF-8') do |f|
             m.last.each do |line|
-              line = yield( m.first, line) if block_given?
+              line = yield( m.first.name, line) if block_given?
               f.puts line
             end
           end
@@ -277,11 +268,11 @@ module MenagerieGenerator
       end
 
       def histogram_format(width: 600, height: 600, resource: "", data_path: "/tmp", group: 0)
-        max = scale_maximum resource.to_s, @grouped_maximums[group][resource].max
-        unit = @units[@resources.index(resource)]
+        max = scale_maximum resource.name.to_s, @grouped_maximums[group][resource].max
+        unit = resource.unit
         image_path = @destination + "group#{group}"
         image_path.mkpath
-        image_path += "#{resource.to_s}_#{width}x#{height}_hist.png"
+        image_path += "#{resource.name.to_s}_#{width}x#{height}_hist.png"
         unit = " (#{unit})" unless unit == ""
         binwidth = 1
         binwidth = max/40 unless max <= 40
@@ -298,7 +289,7 @@ module MenagerieGenerator
         set yrange [0:*]
         set xrange [0:*]
         set xtics right rotate by -45
-        set xlabel "#{resource.to_s}#{unit}" offset 0,-2 character
+        set xlabel "#{resource.name.to_s}#{unit}" offset 0,-2 character
         set bmargin 7
         plot "#{data_path.to_s}" using (bin(\$1,binwidth)):(1.0) smooth freq w boxes lc rgb"#5aabbc"
         }
