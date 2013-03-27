@@ -6,7 +6,7 @@ require 'open3'
 
 module MenagerieGenerator
   class Runner
-    attr_reader :source, :destination, :time_series, :summaries, :resources, :maximums, :workspace, :name, :units
+    attr_reader :source, :destination, :time_series, :summaries, :resources, :workspace, :name
 
     def initialize argv
       process_arguments argv
