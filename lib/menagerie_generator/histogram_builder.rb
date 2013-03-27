@@ -36,6 +36,11 @@ module MenagerieGenerator
         max
       end
 
+      def scale_maximum name, value
+        value /= 1024 if name.match /byte/
+        value
+      end
+
       def gnuplot_format(width: 600, height: 600, resource: "", data_path: "/tmp", group: 0)
         max = scale_maximum resource.name.to_s, @grouped_maximums[group][resource].max
         unit = resource.unit

@@ -144,11 +144,6 @@ module MenagerieGenerator
           build_histograms [[600,600],[250,250]], i
         end
       end
-      def scale_maximum key, value
-        value /= 1024 if key.match /byte/
-        value
-      end
-
       def write_maximum_values maximum_list, index
         base_path = workspace + "group#{index}"
         base_path.mkpath
