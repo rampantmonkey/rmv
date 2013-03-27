@@ -119,16 +119,16 @@ module MenagerieGenerator
 
       def find_files
         time_series = []
-        summaries = []
+        summary_paths = []
         Pathname.glob(@source + "log-rule*") do |path|
           if path.to_s.match /.*summary/
-            summaries << path
+            summary_paths << path
           else
             time_series << path
           end
         end
         @time_series = time_series
-        @summaries = summaries.sort
+        @summaries = SummaryCollection.new summary_paths.sort
       end
 
       def find_resources
@@ -159,11 +159,9 @@ module MenagerieGenerator
       def find_maximums
         max = Hash[ @resources.map {|r| [r,[]] }]
         @summaries.each do |s|
-          summary = YAML.load_file s
-          summary.each do |k,v|
-            k = k.gsub /max_/, ''
-            k = k.to_sym
-            max[k].push v if max.has_key? k
+          @resources.each do |r|
+            tmp = s.send r
+            max[r].push tmp
           end
         end
         max
