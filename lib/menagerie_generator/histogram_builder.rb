@@ -12,7 +12,14 @@ module MenagerieGenerator
     def build sizes=[[600,600]], output=""
     end
     def find_groups
+      groups = []
+      summaries.each do |s|
+        exe = s.executable_name
+        groups << exe unless groups.include? exe
+      end
+      groups
     end
+
     private
       attr_reader :resources, :summaries, :workspace, :destination
   end

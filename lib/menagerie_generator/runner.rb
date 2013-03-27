@@ -145,15 +145,6 @@ module MenagerieGenerator
         end
       end
 
-      def find_groups
-        groups = []
-        @summaries.each do |s|
-          exe = s.executable_name
-          groups << exe unless groups.include? exe
-        end
-        groups
-      end
-
       def find_maximums group
         max = Hash[ @resources.map {|r| [r,[]] }]
         @summaries.each do |s|
