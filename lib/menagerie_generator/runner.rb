@@ -144,20 +144,6 @@ module MenagerieGenerator
           build_histograms [[600,600],[250,250]], i
         end
       end
-
-      def find_maximums group
-        max = Hash[ @resources.map {|r| [r,[]] }]
-        @summaries.each do |s|
-          @resources.each do |r|
-            if s.executable_name == group
-              tmp = s.send r.name.to_sym
-              max[r].push tmp
-            end
-          end
-        end
-        max
-      end
-
       def scale_maximum key, value
         value /= 1024 if key.match /byte/
         value

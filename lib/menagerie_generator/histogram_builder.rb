@@ -22,6 +22,20 @@ module MenagerieGenerator
 
     private
       attr_reader :resources, :summaries, :workspace, :destination
+
+      def find_maximums group
+        max = Hash[ @resources.map {|r| [r,[]] }]
+        summaries.each do |s|
+          resources.each do |r|
+            if s.executable_name == group
+              tmp = s.send r.name.to_sym
+              max[r].push tmp
+            end
+          end
+        end
+        max
+      end
+
       def gnuplot_format(width: 600, height: 600, resource: "", data_path: "/tmp", group: 0)
         max = scale_maximum resource.name.to_s, @grouped_maximums[group][resource].max
         unit = resource.unit
