@@ -6,7 +6,7 @@ require 'open3'
 
 module MenagerieGenerator
   class Runner
-    attr_reader :source, :destination, :time_series, :summaries, :resources, :workspace, :name
+    attr_reader :debug, :source, :destination, :time_series, :summaries, :resources, :workspace, :name
 
     def initialize argv
       options = Options.new argv
@@ -21,9 +21,14 @@ module MenagerieGenerator
       plot_makeflow_log source + 'Makeflow.makeflowlog'
       make_index [[1250,500]], [[600,600],[250,250]]
       copy_static_files
+      remove_temp_files unless debug
     end
 
     private
+      def remove_temp_files
+        `rm -rf #{workspace}`
+      end
+
       def find_start_time
         summary = summaries.first
         lowest = summary.start
@@ -104,6 +109,7 @@ module MenagerieGenerator
         end
 
         @name = args.name
+        @debug = args.debug
 
         @workspace.mkpath
         @top_level_destination = @destination
