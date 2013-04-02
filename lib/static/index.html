@@ -1,0 +1,96 @@
+<!doctype html>
+<meta charset="UTF-8">
+<meta name="viewport" content="initial-scale=1.0, width=device-width" />
+<title>Makeflow Menagerie</title>
+<style>
+  img {
+    max-width: 400px;
+    width: 100%;
+  }
+  div {
+    width: 28%;
+    margin: 0 2.66666%;
+    float:left;
+  }
+</style>
+
+<h1>Makeflow Menagerie</h1>
+
+<div>
+<h2>BWA Workflow (bwa_workflow.tar.gz)</h2>
+
+<p><a href="bwa/index.html"><img src="bwa_workflow.jpg" alt="bwa_workflow" title="" /></a></p>
+
+<ul>
+<li>Collectd from <a href="http://biocompute.cse.nd.edu">Biocompute</a> (Job 3948)</li>
+<li>Basic Statistics
+<ul>
+<li>Input size: <code>6.5 GB</code></li>
+<li>Time (100 wq workers): <code>27 min</code></li>
+<li>274 splits generated</li>
+</ul></li>
+<li>Description of files
+<ul>
+<li><code>bwa</code> - binary containing algorithm for comparison</li>
+<li><code>concat.pl</code> - combine results</li>
+<li><code>fastq_reduce.pl</code> - split input files</li>
+<li><code>finishjob.sh</code> - clean up temporary files</li>
+<li><code>input.0</code> - database for comparison</li>
+<li><code>input.1</code> - sequences to test</li>
+<li><code>input.2</code> - database for comparison</li>
+<li><code>job.params</code> - variables used by workers</li>
+<li><code>job.sched</code> - variables for condor submission</li>
+<li><code>Makeflow</code> - makefile describing the workflow</li>
+<li><code>split.pl</code> - wrapper script to split input.0 and input.1</li>
+</ul></li>
+<li><a href="bwa/index.html">More Details</a></li>
+</ul>
+</div>
+
+<div>
+<h2>Blast Workflow (blast_workflow.tar.gz)</h2>
+
+<p><a href="blast/index.html"><img src="blast_workflow.jpg" alt="blast_workflow" title="" /></a></p>
+
+<ul>
+<li>Collected from <a href="http://biocompute.cse.nd.edu">Biocompute</a> (Job 3909)</li>
+<li>Basic Statistics
+<ul>
+<li>Input size: <code>8.4 GB</code></li>
+<li>Output size: <code>5.0 MB</code></li>
+<li>Time (10 wq workers): <code>~3.5 hrs</code></li>
+<li>19 splits generated</li>
+</ul></li>
+<li>Description of files
+<ul>
+<li><code>blast_database</code> - reference sequence database</li>
+<li><code>blastx</code> - binary file containing algorithm for comparison</li>
+<li><code>distributed.script</code> - setup environment and run blast</li>
+<li><code>finishjob.sh</code> - clean up temporary files</li>
+<li><code>gen_submit_file_split_inputs.pl</code> - split input data based on job.params and create condor submission file</li>
+<li><code>input</code> - sequences to compare with sequence database</li>
+<li><code>job.params</code> - variables used by workers</li>
+<li><code>job.sched</code> - variables for condor submission</li>
+<li><code>legacy_blast.pl</code> - script provided by NCBI to translate parameters between versions of blast</li>
+<li><code>Makeflow</code> - makefile describing the workflow</li>
+</ul></li>
+<li><a href="blast/index.html">More Details</a></li>
+</ul>
+</div>
+
+<div>
+<h2>Shrimp Workflow (shrimp_workflow.tar.gz)</h2>
+
+<p><a href="shrimp/index.html"><img src="shrimp_workflow.jpg" alt="shrimp_workflow" title="" /></a></p>
+
+<ul>
+<li>Collected from <a href="http://biocompute.cse.nd.edu">Biocompute</a> (Job 2266)</li>
+<li>Basic Statistics
+<ul>
+<li>Input Size: <code>675 MB</code></li>
+<li>5081 Rules</li>
+<li>Time (200 wq workers): <code>3 hours</code></li>
+</ul></li>
+<li><a href="shrimp/index.html">More Details</a></li>
+</ul>
+</div>
