@@ -94,3 +94,9 @@ section.summary img {
 .pagination li.current a {
   background-position:0 -12px;
 }
+
+@media (min-width: 1280px) {
+  .content {
+    max-width: 2350px;
+  }
+}
