@@ -15,7 +15,7 @@ module MenagerieGenerator
       results = []
       @grouped_maximums.each_with_index do |g, i|
         write_maximum_values(g, i){|a,b| scale_maximum a, b}
-        results.concat(format_histograms sizes, i)
+        results.concat(format_histograms sizes, i, groups[i])
       end
       results
     end
@@ -68,22 +68,23 @@ module MenagerieGenerator
         end
       end
 
-      def format_histograms sizes, group
+      def format_histograms sizes, group, group_name
         formatted = []
         sizes.each do |s|
           width = s.first
           height = s.last
           resources.each do |r|
-            formatted << gnuplot_format(width: width, height: height, resource: r, data_path: workspace+"group#{group}"+r.to_s, group: group)
+            formatted << gnuplot_format(width: width, height: height, resource: r, data_path: workspace+"group#{group}"+r.to_s, group: group, group_name: group_name)
           end
         end
         formatted
       end
 
-      def gnuplot_format(width: 600, height: 600, resource: "", data_path: "/tmp", group: 0)
+      def gnuplot_format(width: 600, height: 600, resource: "", data_path: "/tmp", group: 0, group_name: "a")
         max = scale_maximum resource.name.to_s, @grouped_maximums[group][resource].max
         unit = resource.unit
-        image_path = destination + "group#{group}"
+        unit = " (#{unit}) " if unit != ""
+        image_path = destination + "#{group_name}"
         image_path.mkpath
         image_path += "#{resource.name.to_s}_#{width}x#{height}_hist.png"
         binwidth = 1
@@ -101,7 +102,7 @@ module MenagerieGenerator
         set yrange [0:*]
         set xrange [0:*]
         set xtics right rotate by -45
-        set xlabel "#{resource.name.to_s} (#{unit})" offset 0,-2 character
+        set xlabel "#{resource.name.to_s}#{unit}" offset 0,-2 character
         set bmargin 7
         plot "#{data_path.to_s}" using (bin(\$1,binwidth)):(1.0) smooth freq w boxes lc rgb"#5aabbc"
         }
