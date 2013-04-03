@@ -6,7 +6,7 @@ require 'open3'
 
 module MenagerieGenerator
   class Runner
-    attr_reader :debug, :source, :destination, :time_series, :summaries, :resources, :workspace, :name, :tasks
+    attr_reader :debug, :source, :destination, :time_series, :resources, :workspace, :name, :tasks
 
     def initialize argv
       options = Options.new argv
@@ -132,7 +132,6 @@ module MenagerieGenerator
           end
         end
         @time_series = time_series_paths
-        @summaries = SummaryCollection.new summary_paths.sort
         @tasks = TaskCollection.new summary_paths, time_series_paths
       end
 
