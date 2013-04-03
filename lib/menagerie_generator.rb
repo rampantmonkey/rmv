@@ -6,6 +6,7 @@ require "menagerie_generator/summary_collection"
 require "menagerie_generator/resources"
 require "menagerie_generator/histogram_builder"
 require "menagerie_generator/options"
+require "menagerie_generator/task"
 
 module MenagerieGenerator
 end
