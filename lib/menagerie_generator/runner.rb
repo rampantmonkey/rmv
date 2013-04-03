@@ -6,7 +6,7 @@ require 'open3'
 
 module MenagerieGenerator
   class Runner
-    attr_reader :debug, :source, :destination, :time_series, :summaries, :resources, :workspace, :name
+    attr_reader :debug, :source, :destination, :time_series, :summaries, :resources, :workspace, :name, :tasks
 
     def initialize argv
       options = Options.new argv
@@ -122,17 +122,18 @@ module MenagerieGenerator
       end
 
       def find_files
-        time_series = []
+        time_series_paths = []
         summary_paths = []
         Pathname.glob(@source + "log-rule*") do |path|
           if path.to_s.match /.*summary/
             summary_paths << path
           else
-            time_series << path
+            time_series_paths << path
           end
         end
-        @time_series = time_series
+        @time_series = time_series_paths
         @summaries = SummaryCollection.new summary_paths.sort
+        @tasks = TaskCollection.new summary_paths, time_series_paths
       end
 
       def find_resources
@@ -142,7 +143,7 @@ module MenagerieGenerator
       end
 
       def create_histograms
-        builder = HistogramBuilder.new resources, summaries, workspace, destination
+        builder = HistogramBuilder.new resources, workspace, destination, tasks
         @groups = builder.find_groups
         builder.build([[600,600],[250,250]]).map do |b|
           gnuplot { |io| io.puts b }

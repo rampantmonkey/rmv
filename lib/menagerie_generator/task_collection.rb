@@ -8,7 +8,8 @@ module MenagerieGenerator
       @tasks = summary_paths.zip(time_series_paths).map { |sp, tp| Task.new(sp,tp) }
     end
 
-    def each
+    def each &block
+      tasks.send :each, &block
     end
 
     def last

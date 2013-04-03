@@ -2,11 +2,11 @@ require_relative '../menagerie_generator'
 
 module MenagerieGenerator
   class HistogramBuilder
-    def initialize resources, summaries, workspace, destination
+    def initialize resources, workspace, destination, tasks
       @resources = resources
-      @summaries = summaries
       @workspace = workspace
       @destination = destination
+      @tasks = tasks
     end
 
     def build sizes=[[600,600]], output=""
@@ -22,26 +22,26 @@ module MenagerieGenerator
 
     def find_groups
       groups = []
-      summaries.each do |s|
-        exe = group_heuristic s
+      tasks.each do |t|
+        exe = group_heuristic t
         groups << exe unless groups.include? exe
       end
       groups
     end
 
     private
-      attr_reader :resources, :summaries, :workspace, :destination
+      attr_reader :resources, :workspace, :destination, :tasks
 
-      def group_heuristic summary
-        summary.executable_name
+      def group_heuristic task
+        task.executable_name
       end
 
       def find_maximums group
         max = Hash[ @resources.map {|r| [r,[]] }]
-        summaries.each do |s|
+        tasks.each do |t|
           resources.each do |r|
-            if group_heuristic(s) == group
-              tmp = s.send r.name.to_sym
+            if group_heuristic(t) == group
+              tmp = t.max r.name.to_sym
               max[r].push tmp
             end
           end

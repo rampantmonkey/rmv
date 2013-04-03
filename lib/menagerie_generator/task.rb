@@ -12,6 +12,13 @@ module MenagerieGenerator
       summary_path.to_s.match(/log-rule-(\d+)-summary/)[1]
     end
 
+    def executable_name
+      summary.executable_name
+    end
+
+    def max resource
+      summary.send resource.to_sym
+    end
 
     private
       attr_reader :summary, :summary_path, :time_series_path
