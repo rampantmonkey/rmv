@@ -23,7 +23,7 @@ module MenagerieGenerator
     def find_groups
       groups = []
       summaries.each do |s|
-        exe = s.executable_name
+        exe = group_heuristic s
         groups << exe unless groups.include? exe
       end
       groups
@@ -32,11 +32,15 @@ module MenagerieGenerator
     private
       attr_reader :resources, :summaries, :workspace, :destination
 
+      def group_heuristic summary
+        summary.executable_name.split(/\.\//)[-1]
+      end
+
       def find_maximums group
         max = Hash[ @resources.map {|r| [r,[]] }]
         summaries.each do |s|
           resources.each do |r|
-            if s.executable_name == group
+            if group_heuristic(s) == group
               tmp = s.send r.name.to_sym
               max[r].push tmp
             end
