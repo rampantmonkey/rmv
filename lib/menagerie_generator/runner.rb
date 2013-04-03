@@ -30,10 +30,10 @@ module MenagerieGenerator
       end
 
       def find_start_time
-        summary = summaries.first
-        lowest = summary.start
-        summary = summaries.last
-        highest = summary.start
+        t1 = tasks.first
+        lowest = t1.grab :start
+        t2 = tasks.last
+        highest = t2.grab :start
         lowest < highest ? lowest : highest
       end
 

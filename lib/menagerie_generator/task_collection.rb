@@ -13,9 +13,11 @@ module MenagerieGenerator
     end
 
     def last
+      tasks.last
     end
 
     def first
+      tasks.first
     end
 
     private

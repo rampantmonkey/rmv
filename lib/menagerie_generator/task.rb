@@ -17,7 +17,11 @@ module MenagerieGenerator
     end
 
     def max resource
-      summary.send resource.to_sym
+      grab resource
+    end
+
+    def grab label
+      summary.send label.to_sym
     end
 
     private
