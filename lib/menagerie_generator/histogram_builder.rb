@@ -97,7 +97,7 @@ module MenagerieGenerator
         set yrange [0:*]
         set xrange [0:*]
         set xtics right rotate by -45
-        set xlabel "#{resource.name.to_s}#{unit}" offset 0,-2 character
+        set xlabel "#{resource.name.to_s} (#{unit})" offset 0,-2 character
         set bmargin 7
         plot "#{data_path.to_s}" using (bin(\$1,binwidth)):(1.0) smooth freq w boxes lc rgb"#5aabbc"
         }
