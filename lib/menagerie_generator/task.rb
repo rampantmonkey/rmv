@@ -8,6 +8,10 @@ module MenagerieGenerator
       @time_series_path = time_series_path
     end
 
+    def rule_id
+      summary_path.to_s.match(/log-rule-(\d+)-summary/)[1]
+    end
+
 
     private
       attr_reader :summary, :summary_path, :time_series_path
