@@ -16,7 +16,7 @@ module MenagerieGenerator
     end
 
     def executable_name
-      contents.fetch(:command).split(' ').first
+      contents.fetch(:command).split(' ').first.split(/\.\//).last
     end
 
     private

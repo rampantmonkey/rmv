@@ -33,7 +33,7 @@ module MenagerieGenerator
       attr_reader :resources, :summaries, :workspace, :destination
 
       def group_heuristic summary
-        summary.executable_name.split(/\.\//)[-1]
+        summary.executable_name
       end
 
       def find_maximums group
