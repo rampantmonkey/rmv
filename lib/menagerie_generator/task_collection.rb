@@ -5,21 +5,19 @@ require 'yaml'
 module MenagerieGenerator
   class TaskCollection
     def initialize summary_paths=[], time_series_paths=[]
+      @tasks = summary_paths.zip(time_series_paths).map { |sp, tp| Task.new(sp,tp) }
     end
 
-    def each_summary
+    def each
     end
 
-    def each_time_series
+    def last
     end
 
-    def last_summary
-    end
-
-    def first_summary
+    def first
     end
 
     private
-      attr_reader :summary_paths, :time_series_paths
+      attr_reader :tasks
   end
 end
