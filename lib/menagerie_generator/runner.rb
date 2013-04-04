@@ -220,7 +220,7 @@ module MenagerieGenerator
           output << %Q{\n<hr />\n} if i > 0
           output << %Q{\n<h2>#{g}</h2>}
           @resources.each do |r|
-            output << %Q{<a href="#{g}/#{r.to_s}_#{hist_large.first}x#{hist_large.last}_hist.png"><img src="#{g}/#{r.to_s}_#{hist_small.first}x#{hist_small.last}_hist.png" /></a>\n}
+            output << %Q{<a href="#{g}/#{r.to_s}/index.html"><img src="#{g}/#{r.to_s}_#{hist_small.first}x#{hist_small.last}_hist.png" /></a>\n}
           end
         end
         output << "</div>"
