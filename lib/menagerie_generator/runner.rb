@@ -17,6 +17,7 @@ module MenagerieGenerator
       find_files
       find_resources
       create_histograms
+      create_group_resource_summaries
       make_combined_time_series
       plot_makeflow_log source + 'Makeflow.makeflowlog'
       make_index [[1250,500]], [[600,600],[250,250]]
@@ -27,6 +28,36 @@ module MenagerieGenerator
     private
       def remove_temp_files
         `rm -rf #{workspace}`
+      end
+
+      def create_group_resource_summaries
+        @groups.each do |g|
+          @resources.each do |r|
+            path = @destination + "#{g}" + "#{r}"
+            path.mkpath
+            page = <<-INDEX
+            <!doctype html>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+            <link rel="stylesheet" type="text/css" media="screen, projection" href="../../../css/style.css" />
+            <title>#{name} Workflow</title>
+            <div class="content">
+            <h1><a href="../../index.html">#{name}</a> - #{g} - #{r}</h1>
+            <table>
+            <tr><th>Rule Id</th><th>Maximum #{r}</th></tr>
+            INDEX
+
+            lines = []
+            @tasks.each { |t| lines << t if t.executable_name == g }
+
+            lines.sort_by{ |t| t.grab r.name }.each do |t|
+                page << "<tr><td>#{t.rule_id}</td><td>#{t.grab r.name}</td></tr>\n"
+            end
+
+            path += "index.html"
+            path.open("w:UTF-8") { |f| f.puts page }
+          end
+        end
       end
 
       def find_start_time
