@@ -50,9 +50,9 @@ module MenagerieGenerator
       end
 
       def scale_maximum name, value
-        value /= 1073741824 if name.match /byte/
-        value /= 1024 if name.match /footprint/
-        value /= 1024 if name.match /memory/
+        value /= 1073741824.0 if name.match /byte/
+        value /= 1024.0 if name.match /footprint/
+        value /= 1024.0 if name.match /memory/
         value
       end
 

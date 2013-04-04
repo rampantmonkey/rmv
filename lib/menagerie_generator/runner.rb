@@ -56,7 +56,7 @@ module MenagerieGenerator
               scaled_resource /= 1024.0 if r.name.match /footprint/
               scaled_resource /= 1024.0 if r.name.match /memory/
               scaled_resource /= 1073741824.0 if r.name.match /byte/
-              page << "<tr><td>#{t.rule_id}</td><td>#{scaled_resource}</td></tr>\n"
+              page << "<tr><td>#{t.rule_id}</td><td>#{scaled_resource.round 3}</td></tr>\n"
             end
 
             path += "index.html"
