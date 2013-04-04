@@ -52,7 +52,11 @@ module MenagerieGenerator
             @tasks.each { |t| lines << t if t.executable_name == g }
 
             lines.sort_by{ |t| t.grab r.name }.each do |t|
-                page << "<tr><td>#{t.rule_id}</td><td>#{t.grab r.name}</td></tr>\n"
+              scaled_resource = t.grab r.name
+              scaled_resource /= 1024.0 if r.name.match /footprint/
+              scaled_resource /= 1024.0 if r.name.match /memory/
+              scaled_resource /= 1073741824.0 if r.name.match /byte/
+              page << "<tr><td>#{t.rule_id}</td><td>#{scaled_resource}</td></tr>\n"
             end
 
             path += "index.html"

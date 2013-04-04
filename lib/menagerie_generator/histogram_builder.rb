@@ -50,7 +50,9 @@ module MenagerieGenerator
       end
 
       def scale_maximum name, value
-        value /= 1024 if name.match /byte/
+        value /= 1073741824 if name.match /byte/
+        value /= 1024 if name.match /footprint/
+        value /= 1024 if name.match /memory/
         value
       end
 
@@ -83,6 +85,10 @@ module MenagerieGenerator
       def gnuplot_format(width: 600, height: 600, resource: "", data_path: "/tmp", group: 0, group_name: "a")
         max = scale_maximum resource.name.to_s, @grouped_maximums[group][resource].max
         unit = resource.unit
+        unit = "GB" if unit.match /MB/
+        unit = "GB" if resource.name.match /footprint/
+        unit = "MB" if unit.match /kB/
+        unit = "GB" if resource.name.match /bytes/
         unit = " (#{unit}) " if unit != ""
         image_path = destination + "#{group_name}"
         image_path.mkpath
