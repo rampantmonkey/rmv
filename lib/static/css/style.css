@@ -29,6 +29,22 @@ section.summary img {
   width: 100%;
 }
 
+img.center {
+  display: block;
+  margin: 0 auto;
+}
+
+table {
+  display: block;
+  width: 50%;
+  margin: 0 auto;
+}
+
+td {
+  padding: 0.2em;
+  text-align: right;
+}
+
 .slides_container {
   width: 1250px;
   height: 500px;

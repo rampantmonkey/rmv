@@ -43,7 +43,7 @@ module MenagerieGenerator
             <title>#{name} Workflow</title>
             <div class="content">
             <h1><a href="../../index.html">#{name}</a> - #{g} - #{r}</h1>
-            <img src="../#{r.to_s}_#{histogram_size.first}x#{histogram_size.last}_hist.png" />
+            <img src="../#{r.to_s}_#{histogram_size.first}x#{histogram_size.last}_hist.png" class="center" />
             <table>
             <tr><th>Rule Id</th><th>Maximum #{r}</th></tr>
             INDEX
@@ -58,6 +58,8 @@ module MenagerieGenerator
               scaled_resource /= 1073741824.0 if r.name.match /byte/
               page << "<tr><td>#{t.rule_id}</td><td>#{scaled_resource.round 3}</td></tr>\n"
             end
+
+            page << "</table>\n</div>\n"
 
             path += "index.html"
             path.open("w:UTF-8") { |f| f.puts page }
