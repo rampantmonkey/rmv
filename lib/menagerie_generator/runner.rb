@@ -30,7 +30,7 @@ module MenagerieGenerator
         `rm -rf #{workspace}`
       end
 
-      def create_group_resource_summaries
+      def create_group_resource_summaries histogram_size=[600,600]
         @groups.each do |g|
           @resources.each do |r|
             path = @destination + "#{g}" + "#{r}"
@@ -43,6 +43,7 @@ module MenagerieGenerator
             <title>#{name} Workflow</title>
             <div class="content">
             <h1><a href="../../index.html">#{name}</a> - #{g} - #{r}</h1>
+            <img src="../#{r.to_s}_#{histogram_size.first}x#{histogram_size.last}_hist.png" />
             <table>
             <tr><th>Rule Id</th><th>Maximum #{r}</th></tr>
             INDEX
