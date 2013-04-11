@@ -116,3 +116,7 @@ td {
     max-width: 2350px;
   }
 }
+
+td {
+  vertical-align: middle;
+}
