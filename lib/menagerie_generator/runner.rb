@@ -69,6 +69,21 @@ module MenagerieGenerator
         end
       end
 
+      def scale_resource r, value
+        value /= 1024.0 if r.name.match /footprint/
+        value /= 1024.0 if r.name.match /memory/
+        value /= 1073741824.0 if r.name.match /byte/
+        unit = r.unit
+        unit = "GB" if unit.match /MB/
+        unit = "GB" if r.name.match /footprint/
+        unit = "MB" if unit.match /kB/
+        unit = "GB" if r.name.match /bytes/
+        unit = " (#{unit}) " unless unit == ""
+
+        return value, unit
+      end
+
+
       def create_rule_page task, path
         page = <<-INDEX
         <!doctype html>
@@ -78,7 +93,16 @@ module MenagerieGenerator
         <title>#{name} Workflow</title>
         <div class="content">
         <h1><a href="../../index.html">#{name}</a> - #{task.executable_name} - #{task.rule_id}</h1>
+        <table>
         INDEX
+
+        page << "<tr><td>command</td><td>#{task.grab "command"}</td></tr>\n"
+        resources.each do |r|
+          value, unit = scale_resource r, task.grab(r.name)
+          page << "<tr><td><a href=\"#{r.name}/index.html\">#{r.name}</a></td><td>#{value.round 3} #{unit}</td></tr>\n"
+        end
+
+        page << "</table>\n</div>\n"
 
         path.open("w:UTF-8") { |f| f.puts page }
       end
