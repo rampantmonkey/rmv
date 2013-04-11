@@ -96,6 +96,23 @@ module MenagerieGenerator
         <table>
         INDEX
 
+        start = nil
+        scratch_file = @workspace + "#{task.rule_id}.scaled"
+        scratch_file.open("w:UTF-8") do |f|
+          task.time_series.open.each do |l|
+            next if l.match /#/
+            l = l.split(/\s+/)
+            next if l.length == 0
+            l = l.map {|a| a.to_i}
+            start = l.first unless start
+            l[0] = l.first - start
+            resources.each_with_index do |r, i|
+              l[i], _ = scale_resource r, l[i]
+            end
+            f.puts l.join(" ")
+          end
+        end
+
         page << "<tr><td>command</td><td>#{task.grab "command"}</td></tr>\n"
         resources.each do |r|
           value, unit = scale_resource r, task.grab(r.name)
