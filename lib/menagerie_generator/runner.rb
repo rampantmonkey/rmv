@@ -113,6 +113,12 @@ module MenagerieGenerator
           end
         end
 
+        resources.each_with_index do |r,i|
+          next if i == 0
+          out = @destination + "#{task.executable_name}" + "#{r.name}" + "#{task.rule_id}.png"
+          gnuplot {|io| io.puts time_series_format(width: 600, height: 300, resource: r, data_path: scratch_file, outpath: out, column: i+1 )}
+        end
+
         page << "<tr><td>command</td><td>#{task.grab "command"}</td></tr>\n"
         resources.each do |r|
           value, unit = scale_resource r, task.grab(r.name)
