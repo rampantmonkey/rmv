@@ -198,7 +198,8 @@ module MenagerieGenerator
               data = l.split /\s+/
               adjusted_start = data[0].to_i - start
               @resources.each_with_index do |r, i|
-                aggregate_usage[r][adjusted_start] += data[i].to_i unless i == 0
+                scaled_value, _ = scale_resource r, data[i].to_i
+                aggregate_usage[r][adjusted_start] += scaled_value unless i == 0
               end
             end
           end
