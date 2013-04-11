@@ -24,6 +24,10 @@ module MenagerieGenerator
       summary.send label.to_sym
     end
 
+    def time_series
+      time_series_path
+    end
+
     private
       attr_reader :summary, :summary_path, :time_series_path
 
