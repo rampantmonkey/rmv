@@ -120,9 +120,12 @@ module MenagerieGenerator
         end
 
         page << "<tr><td>command</td><td>#{task.grab "command"}</td></tr>\n"
-        resources.each do |r|
+        resources.each_with_index do |r, i|
           value, unit = scale_resource r, task.grab(r.name)
-          page << "<tr><td><a href=\"#{r.name}/index.html\">#{r.name}</a></td><td>#{value.round 3} #{unit}</td></tr>\n"
+          img_path = "#{r.name}/#{task.rule_id}.png"
+          page << "<tr><td><a href=\"#{r.name}/index.html\">#{r.name}</a></td><td>#{value.round 3} #{unit}</td>"
+          page << "<td><img src=\"#{img_path}\" /></td>" if i > 0
+          page << "</tr>\n"
         end
 
         page << "</table>\n</div>\n"
