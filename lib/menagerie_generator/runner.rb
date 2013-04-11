@@ -51,12 +51,14 @@ module MenagerieGenerator
             lines = []
             @tasks.each { |t| lines << t if t.executable_name == g }
 
+            lines.each { |t| create_rule_page t, @destination + "#{g}" + "#{t.rule_id}.html" }
+
             lines.sort_by{ |t| t.grab r.name }.each do |t|
               scaled_resource = t.grab r.name
               scaled_resource /= 1024.0 if r.name.match /footprint/
               scaled_resource /= 1024.0 if r.name.match /memory/
               scaled_resource /= 1073741824.0 if r.name.match /byte/
-              page << "<tr><td>#{t.rule_id}</td><td>#{scaled_resource.round 3}</td></tr>\n"
+              page << "<tr><td><a href=\"../#{t.rule_id}.html\">#{t.rule_id}</a></td><td>#{scaled_resource.round 3}</td></tr>\n"
             end
 
             page << "</table>\n</div>\n"
@@ -65,6 +67,20 @@ module MenagerieGenerator
             path.open("w:UTF-8") { |f| f.puts page }
           end
         end
+      end
+
+      def create_rule_page task, path
+        page = <<-INDEX
+        <!doctype html>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+        <link rel="stylesheet" type="text/css" media="screen, projection" href="../../css/style.css" />
+        <title>#{name} Workflow</title>
+        <div class="content">
+        <h1><a href="../../index.html">#{name}</a> - #{task.executable_name} - #{task.rule_id}</h1>
+        INDEX
+
+        path.open("w:UTF-8") { |f| f.puts page }
       end
 
       def find_start_time
