@@ -1,5 +1,8 @@
 #!/usr/bin/env ruby
 
+min_release = "2.0.0"
+abort "Menagerie Generator requires Ruby version #{min_release} or greater.\nUpgrade and try again." if RUBY_VERSION < min_release
+
 require_relative '../lib/menagerie_generator'
 
 runner = MenagerieGenerator::Runner.new ARGV
