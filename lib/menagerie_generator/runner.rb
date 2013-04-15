@@ -6,7 +6,7 @@ require 'open3'
 
 module MenagerieGenerator
   class Runner
-    attr_reader :debug, :source, :destination, :time_series, :resources, :workspace, :name, :tasks
+    attr_reader :debug, :source, :destination, :overwrite, :time_series, :resources, :workspace, :name, :tasks
 
     def initialize argv
       options = Options.new argv
@@ -83,21 +83,12 @@ module MenagerieGenerator
         return value, unit
       end
 
+      def run_if_not_exist path
+        yield if overwrite or !path.exist?
+      end
 
-      def create_rule_page task, path
-        page = <<-INDEX
-        <!doctype html>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-        <link rel="stylesheet" type="text/css" media="screen, projection" href="../../css/style.css" />
-        <title>#{name} Workflow</title>
-        <div class="content">
-        <h1><a href="../../index.html">#{name}</a> - #{task.executable_name} - #{task.rule_id}</h1>
-        <table>
-        INDEX
-
+      def scale_time_series task, scratch_file
         start = nil
-        scratch_file = @workspace + "#{task.rule_id}.scaled"
         scratch_file.open("w:UTF-8") do |f|
           task.time_series.open.each do |l|
             next if l.match /#/
@@ -112,6 +103,22 @@ module MenagerieGenerator
             f.puts l.join(" ")
           end
         end
+      end
+
+      def create_rule_page task, path
+        page = <<-INDEX
+        <!doctype html>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+        <link rel="stylesheet" type="text/css" media="screen, projection" href="../../css/style.css" />
+        <title>#{name} Workflow</title>
+        <div class="content">
+        <h1><a href="../../index.html">#{name}</a> - #{task.executable_name} - #{task.rule_id}</h1>
+        <table>
+        INDEX
+
+        scratch_file = @workspace + "#{task.rule_id}.scaled"
+        run_if_not_exist(scratch_file) { scale_time_series task, scratch_file }
 
         resources.each_with_index do |r,i|
           next if i == 0
@@ -214,6 +221,7 @@ module MenagerieGenerator
 
         @name = args.name
         @debug = args.debug
+        @overwrite = args.overwrite
 
         @workspace.mkpath
         @top_level_destination = @destination

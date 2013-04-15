@@ -11,6 +11,7 @@ module MenagerieGenerator
                  debug: false,
                  destination: nil,
                  name: "unnamed",
+                 overwrite: false,
                  workspace: Pathname.new("/tmp/menagerie")}
       parse argv
       mandatory = [:source, :destination]
@@ -41,6 +42,7 @@ module MenagerieGenerator
         opts.on("-n", "--name name", String, "Set the name of the workflow") do |n|
           config[:name] = n
         end
+        opts.on("-o", "--overwrite", String, "Overwrite existing output files") { config[:overwrite] = true }
         opts.on("-s", "--source path", String, "Directory to the log files for visualizing") do |s|
           config[:source] = Pathname.new(s).expand_path
         end
