@@ -51,7 +51,10 @@ module MenagerieGenerator
             lines = []
             @tasks.each { |t| lines << t if t.executable_name == g }
 
-            lines.each { |t| create_rule_page t, @destination + "#{g}" + "#{t.rule_id}.html" }
+            lines.each do |t|
+              rule_path = @destination + "#{g}" + "#{t.rule_id}.html"
+              run_if_not_exist(rule_path) { create_rule_page t, rule_path }
+            end
 
             lines.sort_by{ |t| t.grab r.name }.each do |t|
               scaled_resource = t.grab r.name
@@ -64,7 +67,7 @@ module MenagerieGenerator
             page << "</table>\n</div>\n"
 
             path += "index.html"
-            path.open("w:UTF-8") { |f| f.puts page }
+            write_file path, page
           end
         end
       end
@@ -81,6 +84,10 @@ module MenagerieGenerator
         unit = " (#{unit}) " unless unit == ""
 
         return value, unit
+      end
+
+      def write_file path, content
+        run_if_not_exist(path) { path.open("w:UTF-8") { |f| f.puts content } }
       end
 
       def run_if_not_exist path
@@ -123,7 +130,9 @@ module MenagerieGenerator
         resources.each_with_index do |r,i|
           next if i == 0
           out = @destination + "#{task.executable_name}" + "#{r.name}" + "#{task.rule_id}.png"
-          gnuplot {|io| io.puts time_series_format(width: 600, height: 300, resource: r, data_path: scratch_file, outpath: out, column: i+1 )}
+          run_if_not_exist(out) do
+            gnuplot {|io| io.puts time_series_format(width: 600, height: 300, resource: r, data_path: scratch_file, outpath: out, column: i+1 )}
+          end
         end
 
         page << "<tr><td>command</td><td>#{task.grab "command"}</td></tr>\n"
@@ -137,7 +146,7 @@ module MenagerieGenerator
 
         page << "</table>\n</div>\n"
 
-        path.open("w:UTF-8") { |f| f.puts page }
+        write_file path, page
       end
 
       def find_start_time
@@ -163,7 +172,7 @@ module MenagerieGenerator
             a = a.split(/\t/)
             a[0].to_i
           end
-          path.open("w:UTF-8"){|f| f.puts output}
+          write_file path, output
         end
       end
 
@@ -324,8 +333,10 @@ module MenagerieGenerator
         output_path = destination + 'makeflowlog.png'
         mflog = MakeflowLog.from_file log_file
         summary_data_file = workspace + "summarydata"
-        summary_data_file.open("w:UTF-8") { |f| f.puts mflog }
-        gnuplot {|io| io.puts mflog.gnuplot_format(data_path: summary_data_file, output_path: destination) }
+        run_if_not_exist summary_data_file do
+          summary_data_file.open("w:UTF-8") { |f| f.puts mflog }
+          gnuplot {|io| io.puts mflog.gnuplot_format(data_path: summary_data_file, output_path: destination) }
+        end
       end
   end
 end
