@@ -81,8 +81,8 @@ module MenagerieGenerator
         unit = "GB" if r.name.match /footprint/
         unit = "MB" if unit.match /kB/
         unit = "GB" if r.name.match /bytes/
+        unit = yield unit if block_given?
         unit = " (#{unit}) " unless unit == ""
-
         return value, unit
       end
 
@@ -181,13 +181,15 @@ module MenagerieGenerator
           width = s.first
           height = s.last
           @resources.each do |r|
-            gnuplot {|io| io.puts time_series_format(width: width, height: height, resource: r, data_path: workspace+"aggregate_#{r.name.to_s}")}
+            cpu_unit = nil
+            cpu_unit = "%" if r.name.match /cpu_time/
+            gnuplot {|io| io.puts time_series_format(width: width, height: height, resource: r, data_path: workspace+"aggregate_#{r.name.to_s}", cpu_unit: cpu_unit)}
           end
         end
       end
 
-      def time_series_format(width: 1250, height: 500, resource: "", data_path: "/tmp", outpath: nil, column: 2)
-        _, unit = scale_resource resource, 0
+      def time_series_format(width: 1250, height: 500, resource: "", data_path: "/tmp", outpath: nil, column: 2, cpu_unit: nil)
+        _, unit = scale_resource(resource, 0) { |u| cpu_unit.nil? ? u : "%" }
         outpath = "#{@destination + resource.to_s}_#{width}x#{height}_aggregate.png" unless outpath
         %Q{set terminal png transparent size #{width},#{height}
         set bmargin 4
@@ -205,6 +207,8 @@ module MenagerieGenerator
 
       def find_aggregate_usage
         start = find_start_time.to_i
+        previous_cpu = 0
+        interval = nil
         aggregate_usage = {}
         @resources.each {|r| aggregate_usage[r] = Hash.new 0}
         @time_series.each do |s|
@@ -212,9 +216,16 @@ module MenagerieGenerator
           lines.each do |l|
             unless l.match /^#/
               data = l.split /\s+/
+              interval = data[0].to_i - start if [0, nil].include? interval
               adjusted_start = data[0].to_i - start
               @resources.each_with_index do |r, i|
                 scaled_value, _ = scale_resource r, data[i].to_i
+                if r.name.match /cpu_time/
+                  tmp = scaled_value
+                  scaled_value -= previous_cpu
+                  scaled_value /= interval if interval > 0
+                  previous_cpu = tmp
+                end
                 aggregate_usage[r][adjusted_start] += scaled_value unless i == 0
               end
             end
