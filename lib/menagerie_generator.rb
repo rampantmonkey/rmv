@@ -8,6 +8,7 @@ require "menagerie_generator/histogram_builder"
 require "menagerie_generator/options"
 require "menagerie_generator/task"
 require "menagerie_generator/task_collection"
+require "menagerie_generator/page"
 
 module MenagerieGenerator
 end

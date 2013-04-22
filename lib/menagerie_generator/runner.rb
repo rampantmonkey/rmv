@@ -35,13 +35,9 @@ module MenagerieGenerator
           @resources.each do |r|
             path = @destination + "#{g}" + "#{r}"
             path.mkpath
-            page = <<-INDEX
-            <!doctype html>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-            <link rel="stylesheet" type="text/css" media="screen, projection" href="../../../css/style.css" />
-            <title>#{name} Workflow</title>
-            <div class="content">
+
+            page = Page.new "#{name} Workflow", @destination
+            content = <<-INDEX
             <h1><a href="../../index.html">#{name}</a> - #{g} - #{r}</h1>
             <img src="../#{r.to_s}_#{histogram_size.first}x#{histogram_size.last}_hist.png" class="center" />
             <table>
@@ -61,13 +57,14 @@ module MenagerieGenerator
               scaled_resource /= 1024.0 if r.name.match /footprint/
               scaled_resource /= 1024.0 if r.name.match /memory/
               scaled_resource /= 1073741824.0 if r.name.match /byte/
-              page << "<tr><td><a href=\"../#{t.rule_id}.html\">#{t.rule_id}</a></td><td>#{scaled_resource.round 3}</td></tr>\n"
+              content << "<tr><td><a href=\"../#{t.rule_id}.html\">#{t.rule_id}</a></td><td>#{scaled_resource.round 3}</td></tr>\n"
             end
 
-            page << "</table>\n</div>\n"
+            content << "</table>\n"
+            page.content = content
 
             path += "index.html"
-            write_file path, page
+            write_file path,(page.write path)
           end
         end
       end
