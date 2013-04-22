@@ -76,13 +76,13 @@ module MenagerieGenerator
           width = s.first
           height = s.last
           resources.each do |r|
-            formatted << gnuplot_format(width: width, height: height, resource: r, data_path: workspace+"group#{group}"+r.to_s, group: group, group_name: group_name)
+            formatted << gnuplot_format(width, height, r, workspace+"group#{group}"+r.to_s, group, group_name)
           end
         end
         formatted
       end
 
-      def gnuplot_format(width: 600, height: 600, resource: "", data_path: "/tmp", group: 0, group_name: "a")
+      def gnuplot_format(width=600, height=600, resource="", data_path="/tmp", group=0, group_name="a")
         max = scale_maximum resource.name.to_s, @grouped_maximums[group][resource].max
         unit = resource.unit
         unit = "GB" if unit.match /MB/
