@@ -346,9 +346,9 @@ module MenagerieGenerator
         output_path = destination + 'makeflowlog.png'
         mflog = MakeflowLog.from_file log_file
         summary_data_file = workspace + "summarydata"
-        run_if_not_exist summary_data_file do
+        run_if_not_exist output_path do
           summary_data_file.open("w:UTF-8") { |f| f.puts mflog }
-          gnuplot {|io| io.puts mflog.gnuplot_format(data_path: summary_data_file, output_path: destination) }
+          gnuplot {|io| io.puts mflog.gnuplot_format(1250, 500, summary_data_file, destination) }
         end
       end
   end

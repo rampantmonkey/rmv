@@ -50,7 +50,7 @@ module MenagerieGenerator
       data.join "\n"
     end
 
-    def gnuplot_format(width: 1250, height: 500, data_path: "/tmp", output_path: "")
+    def gnuplot_format(width=1250, height=500, data_path="/tmp", output_path="")
       %Q{set terminal png transparent size #{width},#{height}
       set bmargin 4
       set key ins left top
