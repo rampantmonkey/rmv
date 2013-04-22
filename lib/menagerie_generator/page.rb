@@ -5,15 +5,15 @@ module MenagerieGenerator
     def initialize title="", base_path="/"
       @title = title
       @base = Pathname.new base_path
-    end
-
-
-    def content= c
-      @content = c
+      @content = ""
     end
 
     def write path
       header(path) << content << footer
+    end
+
+    def << s
+      @content << s
     end
 
     private
