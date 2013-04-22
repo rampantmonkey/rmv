@@ -288,30 +288,12 @@ module MenagerieGenerator
       def make_index summary_sizes = [[1250, 500]], histogram_sizes=[[600,600]]
         path = destination + "index.html"
         page = Page.new "#{name} Workflow", destination
-        page << <<-INDEX
-        <script src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js\"></script>
-        <script src=\"../js/slides.min.jquery.js\"></script>
-        <script>\n \$(function(){\n \$('#slides').slides({\n preload: true,\n });\n });\n </script>
-        <h1>#{name} Workflow</h1>
-        <section class="summary">
-          <div id="slides">
-            <div class="slides_container">
-              <div class="slide"><div class="item"><img src="makeflowlog_1250x500.png" /></div></div>
-        INDEX
+        page << " <h1>#{name} Workflow</h1>"
 
         summary_sizes.sort_by!{|s| s.first}
         summary_large = summary_sizes.last
-        resources.each_with_index do |r, i|
-          page << %Q{ <div class="slide"><div class="item"><img src="#{r.to_s}_#{summary_large.first}x#{summary_large.last}_aggregate.png" /></div></div>\n} unless i == 0
-        end
+        page << slides(summary_large.first, summary_large.last)
 
-        page << <<-INDEX
-           </div>
-            <a href=\"#\" class=\"prev\"><img src=\"../img/arrow-prev.png\" width=\"24\" height=\"43\" alt=\"Arrow Prev\"></a>
-            <a href=\"#\" class=\"next\"><img src=\"../img/arrow-next.png\" width=\"24\" height=\"43\" alt=\"Arrow Next\"></a>
-          </div>
-        </section>
-        INDEX
         histogram_sizes.sort_by! {|s| s.first}
         hist_small = histogram_sizes.first
         hist_large = histogram_sizes.last
@@ -323,7 +305,31 @@ module MenagerieGenerator
           end
         end
 
-        write_file path, page
+        write_page path, page
+      end
+
+      def slides height, width
+        result = <<-INDEX
+        <script src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js\"></script>
+        <script src=\"../js/slides.min.jquery.js\"></script>
+        <script>\n \$(function(){\n \$('#slides').slides({\n preload: true,\n });\n });\n </script>
+        <section class="summary">
+          <div id="slides">
+            <div class="slides_container">
+              <div class="slide"><div class="item"><img src="makeflowlog_1250x500.png" /></div></div>
+        INDEX
+
+        resources.each_with_index do |r, i|
+          result << %Q{ <div class="slide"><div class="item"><img src="#{r.to_s}_#{height}x#{width}_aggregate.png" /></div></div>\n} unless i == 0
+        end
+
+        result << <<-INDEX
+           </div>
+            <a href=\"#\" class=\"prev\"><img src=\"../img/arrow-prev.png\" width=\"24\" height=\"43\" alt=\"Arrow Prev\"></a>
+            <a href=\"#\" class=\"next\"><img src=\"../img/arrow-next.png\" width=\"24\" height=\"43\" alt=\"Arrow Next\"></a>
+          </div>
+        </section>
+        INDEX
       end
 
       def gnuplot
