@@ -277,16 +277,11 @@ module MenagerieGenerator
 
       def make_index summary_sizes = [[1250, 500]], histogram_sizes=[[600,600]]
         path = destination + "index.html"
-        output = <<-INDEX
-        <!doctype html>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-        <link rel="stylesheet" type="text/css" media="screen, projection" href="../css/style.css" />
+        page = Page.new "#{name} Workflow", destination
+        page << <<-INDEX
         <script src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js\"></script>
         <script src=\"../js/slides.min.jquery.js\"></script>
         <script>\n \$(function(){\n \$('#slides').slides({\n preload: true,\n });\n });\n </script>
-        <title>#{name} Workflow</title>
-        <div class="content">
         <h1>#{name} Workflow</h1>
         <section class="summary">
           <div id="slides">
@@ -297,10 +292,10 @@ module MenagerieGenerator
         summary_sizes.sort_by!{|s| s.first}
         summary_large = summary_sizes.last
         resources.each_with_index do |r, i|
-          output << %Q{ <div class="slide"><div class="item"><img src="#{r.to_s}_#{summary_large.first}x#{summary_large.last}_aggregate.png" /></div></div>\n} unless i == 0
+          page << %Q{ <div class="slide"><div class="item"><img src="#{r.to_s}_#{summary_large.first}x#{summary_large.last}_aggregate.png" /></div></div>\n} unless i == 0
         end
 
-        output << <<-INDEX
+        page << <<-INDEX
            </div>
             <a href=\"#\" class=\"prev\"><img src=\"../img/arrow-prev.png\" width=\"24\" height=\"43\" alt=\"Arrow Prev\"></a>
             <a href=\"#\" class=\"next\"><img src=\"../img/arrow-next.png\" width=\"24\" height=\"43\" alt=\"Arrow Next\"></a>
@@ -311,14 +306,14 @@ module MenagerieGenerator
         hist_small = histogram_sizes.first
         hist_large = histogram_sizes.last
         @groups.each_with_index do |g, i|
-          output << %Q{\n<hr />\n} if i > 0
-          output << %Q{\n<h2>#{g}</h2>}
+          page << %Q{\n<hr />\n} if i > 0
+          page << %Q{\n<h2>#{g}</h2>}
           @resources.each do |r|
-            output << %Q{<a href="#{g}/#{r.to_s}/index.html"><img src="#{g}/#{r.to_s}_#{hist_small.first}x#{hist_small.last}_hist.png" /></a>\n}
+            page << %Q{<a href="#{g}/#{r.to_s}/index.html"><img src="#{g}/#{r.to_s}_#{hist_small.first}x#{hist_small.last}_hist.png" /></a>\n}
           end
         end
-        output << "</div>"
-        path.open("w:UTF-8") { |f| f.puts output }
+
+        write_file path, (page.write path)
       end
 
       def gnuplot
