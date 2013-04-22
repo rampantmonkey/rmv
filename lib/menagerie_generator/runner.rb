@@ -129,9 +129,11 @@ module MenagerieGenerator
 
         resources.each_with_index do |r,i|
           next if i == 0
-          out = @destination + "#{task.executable_name}" + "#{r.name}" + "#{task.rule_id}.png"
+          out = @destination + "#{task.executable_name}" + "#{r.name}"
+          out.mkpath
+          out += "#{task.rule_id}.png"
           run_if_not_exist(out) do
-            gnuplot {|io| io.puts time_series_format(width: 600, height: 300, resource: r, data_path: scratch_file, outpath: out, column: i+1 )}
+            gnuplot {|io| io.puts time_series_format(600, 300, r, scratch_file, out, i+1, nil )}
           end
         end
 
@@ -183,12 +185,12 @@ module MenagerieGenerator
           @resources.each do |r|
             cpu_unit = nil
             cpu_unit = "%" if r.name.match /cpu_time/
-            gnuplot {|io| io.puts time_series_format(width: width, height: height, resource: r, data_path: workspace+"aggregate_#{r.name.to_s}", cpu_unit: cpu_unit)}
+            gnuplot {|io| io.puts time_series_format( width, height, r, workspace+"aggregate_#{r.name.to_s}", nil, 2, cpu_unit)}
           end
         end
       end
 
-      def time_series_format(width: 1250, height: 500, resource: "", data_path: "/tmp", outpath: nil, column: 2, cpu_unit: nil)
+      def time_series_format(width=1250, height=500, resource="", data_path="/tmp", outpath=nil, column=2, cpu_unit=nil)
         _, unit = scale_resource(resource, 0) { |u| cpu_unit.nil? ? u : "%" }
         outpath = "#{@destination + resource.to_s}_#{width}x#{height}_aggregate.png" unless outpath
         %Q{set terminal png transparent size #{width},#{height}
