@@ -83,7 +83,10 @@ module MenagerieGenerator
       end
 
       def write_file path, content
-        run_if_not_exist(path) { path.open("w:UTF-8") { |f| f.puts content } }
+        run_if_not_exist(path) do
+          path.open("w:UTF-8") { |f| f.puts content }
+          STDERR.puts "Wrote #{path}" if debug
+        end
       end
 
       def run_if_not_exist path
