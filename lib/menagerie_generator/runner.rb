@@ -63,7 +63,7 @@ module MenagerieGenerator
             page << "</table>\n"
 
             path += "index.html"
-            write_file path,(page.write path)
+            write_page path, page
           end
         end
       end
@@ -85,6 +85,13 @@ module MenagerieGenerator
       def write_file path, content
         run_if_not_exist(path) do
           path.open("w:UTF-8") { |f| f.puts content }
+          STDERR.puts "Wrote #{path}" if debug
+        end
+      end
+
+      def write_page path, page
+        run_if_not_exist(path) do
+          path.open("w:UTF-8") { |f| f.puts page.write(path) }
           STDERR.puts "Wrote #{path}" if debug
         end
       end
@@ -143,7 +150,7 @@ module MenagerieGenerator
 
         page << "</table>\n"
 
-        write_file path,(page.write path)
+        write_page path, page
       end
 
       def find_start_time
@@ -316,7 +323,7 @@ module MenagerieGenerator
           end
         end
 
-        write_file path, (page.write path)
+        write_file path, page
       end
 
       def gnuplot
