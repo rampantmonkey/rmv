@@ -35,38 +35,37 @@ module MenagerieGenerator
         @writer = Writer.new workspace, destination, overwrite
       end
 
+      def make_directories
+        @groups.product(resources).map { |g, r| (destination + "#{g}" + "#{r}").mkpath }
+      end
+
       def create_group_resource_summaries histogram_size=[600,600]
-        @groups.each do |g|
-          @resources.each do |r|
-            path =  "#{g}/#{r}"
-            (destination + path).mkpath
+        make_directories
+        @groups.product(resources).map do |g, r|
+          page = Page.new "#{name} Workflow"
+          page << <<-INDEX
+          <h1><a href="../../index.html">#{name}</a> - #{g} - #{r}</h1>
+          <img src="../#{r.to_s}_#{histogram_size.first}x#{histogram_size.last}_hist.png" class="center" />
+          <table>
+          <tr><th>Rule Id</th><th>Maximum #{r}</th></tr>
+          INDEX
 
-            page = Page.new "#{name} Workflow"
-            page << <<-INDEX
-            <h1><a href="../../index.html">#{name}</a> - #{g} - #{r}</h1>
-            <img src="../#{r.to_s}_#{histogram_size.first}x#{histogram_size.last}_hist.png" class="center" />
-            <table>
-            <tr><th>Rule Id</th><th>Maximum #{r}</th></tr>
-            INDEX
+          lines = []
+          @tasks.each { |t| lines << t if t.executable_name == g }
 
-            lines = []
-            @tasks.each { |t| lines << t if t.executable_name == g }
-
-            lines.each do |t|
-              rule_path = "#{g}/#{t.rule_id}.html"
-              run_if_not_exist(destination+rule_path) { create_rule_page t, rule_path }
-            end
-
-            lines.sort_by{ |t| t.grab r.name }.each do |t|
-              scaled_resource, _ = scale_resource r, (t.grab r.name)
-              page << "<tr><td><a href=\"../#{t.rule_id}.html\">#{t.rule_id}</a></td><td>#{scaled_resource.round 3}</td></tr>\n"
-            end
-
-            page << "</table>\n"
-
-            path += "/index.html"
-            write path, page
+          lines.each do |t|
+            rule_path = "#{g}/#{t.rule_id}.html"
+            run_if_not_exist(destination+rule_path) { create_rule_page t, rule_path }
           end
+
+          lines.sort_by{ |t| t.grab r.name }.each do |t|
+            scaled_resource, _ = scale_resource r, (t.grab r.name)
+            page << "<tr><td><a href=\"../#{t.rule_id}.html\">#{t.rule_id}</a></td><td>#{scaled_resource.round 3}</td></tr>\n"
+          end
+
+          page << "</table>\n"
+
+          write "#{g}/#{r}/index.html", page
         end
       end
 

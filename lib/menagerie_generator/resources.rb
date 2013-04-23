@@ -28,6 +28,10 @@ module MenagerieGenerator
       @r.each_with_index &b
     end
 
+    def to_ary
+      @r
+    end
+
     private
       class Resource < Struct.new(:name, :unit)
         def to_s
