@@ -225,7 +225,7 @@ module RMV
       end
 
       def copy_static_files
-        `cp -r lib/static/* #{@top_level_destination}`
+        `cp -r lib/rmv_static/* #{@top_level_destination}`
       end
 
       def find_files
