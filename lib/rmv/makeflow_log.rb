@@ -1,6 +1,6 @@
-require_relative '../menagerie_generator'
+require_relative '../rmv'
 
-module MenagerieGenerator
+module RMV
   class MakeflowLog
     class << self
       def from_file path

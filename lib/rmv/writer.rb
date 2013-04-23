@@ -1,8 +1,8 @@
-require_relative "../menagerie_generator"
+require_relative "../rmv"
 
 require 'pathname'
 
-module MenagerieGenerator
+module RMV
   class Writer
     def initialize workspace, output_directory, overwrite
       @workspace = workspace

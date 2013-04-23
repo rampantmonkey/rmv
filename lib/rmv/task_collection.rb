@@ -1,8 +1,8 @@
-require_relative '../menagerie_generator'
+require_relative '../rmv'
 
 require 'yaml'
 
-module MenagerieGenerator
+module RMV
   class TaskCollection
     def initialize summary_paths=[], time_series_paths=[]
       @tasks = summary_paths.zip(time_series_paths).map { |sp, tp| Task.new(sp,tp) }

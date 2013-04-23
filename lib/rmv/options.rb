@@ -1,9 +1,9 @@
-require_relative '../menagerie_generator'
+require_relative '../rmv'
 
 require 'optparse'
 require 'pathname'
 
-module MenagerieGenerator
+module RMV
   class Options
 
     def initialize argv
@@ -12,7 +12,7 @@ module MenagerieGenerator
                  destination: nil,
                  name: "",
                  overwrite: false,
-                 workspace: Pathname.new("/tmp/menagerie")}
+                 workspace: Pathname.new("/tmp/rmv")}
       parse argv
       mandatory = [:source, :destination]
       missing = mandatory.select { |param| config[param].nil? }
@@ -28,7 +28,7 @@ module MenagerieGenerator
 
     def parse argv
       OptionParser.new do |opts|
-        opts.banner = "Usage:    menagerie [options] "
+        opts.banner = "Usage:    rmv [options] "
         opts.on("-D", "--debug", "Keep intermediate files and produce more verbose output") do
           config[:debug] = true
         end
@@ -46,7 +46,7 @@ module MenagerieGenerator
         opts.on("-s", "--source path", String, "Directory to the log files for visualizing") do |s|
           config[:source] = Pathname.new(s).expand_path
         end
-        opts.on("-w", "--workspace path", String, "Directory for storing temporary files. Default: /tmp/menagerie") do
+        opts.on("-w", "--workspace path", String, "Directory for storing temporary files. Default: /tmp/rmv") do
           config[:workspace] = Pathname.new(w).expand_path
         end
 

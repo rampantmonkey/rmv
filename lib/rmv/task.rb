@@ -1,6 +1,6 @@
-require_relative '../menagerie_generator'
+require_relative '../rmv'
 
-module MenagerieGenerator
+module RMV
   class Task
     def initialize summary_path, time_series_path
       @summary_path = summary_path

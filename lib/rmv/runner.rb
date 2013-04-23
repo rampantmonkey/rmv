@@ -1,10 +1,10 @@
-require_relative '../menagerie_generator'
+require_relative '../rmv'
 
 require 'pathname'
 require 'yaml'
 require 'open3'
 
-module MenagerieGenerator
+module RMV
   class Runner
     attr_reader :debug, :source, :destination, :overwrite, :time_series, :resources, :workspace, :name, :tasks, :writer
 

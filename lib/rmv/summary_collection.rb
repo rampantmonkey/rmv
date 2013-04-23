@@ -1,8 +1,8 @@
-require_relative '../menagerie_generator'
+require_relative '../rmv'
 
 require 'yaml'
 
-module MenagerieGenerator
+module RMV
   class SummaryCollection
     def initialize paths
       @paths = Array(paths)

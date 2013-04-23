@@ -1,4 +1,4 @@
-Menagerie Generator
+Resource Monitor Visualizer (RMV)
 
 Build webpage summarizing resource usage of distributed application.
 
@@ -36,8 +36,6 @@ The summary file contains some general information of the process (start time, e
 Older or newer versions of `gnuplot` may work, but are untested.
 
 # Contributing
-
- [![Build Status](https://travis-ci.org/rampantmonkey/menagerie-generator.png?branch=master)](https://travis-ci.org/rampantmonkey/menagerie-generator)
 
 Any design improvements are more than welcome. Just submit a pull request with the changes.
 

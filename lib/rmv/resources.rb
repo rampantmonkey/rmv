@@ -1,6 +1,6 @@
-require_relative '../menagerie_generator'
+require_relative '../rmv'
 
-module MenagerieGenerator
+module RMV
   class Resources
     def initialize  header
       @r = header.split(/\s+/).map do |h|
