@@ -20,6 +20,10 @@ module MenagerieGenerator
       tasks.first
     end
 
+    def select &block
+      tasks.send :select, &block
+    end
+
     private
       attr_reader :tasks
   end

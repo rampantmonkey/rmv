@@ -50,15 +50,9 @@ module MenagerieGenerator
           <tr><th>Rule Id</th><th>Maximum #{r}</th></tr>
           INDEX
 
-          lines = []
-          @tasks.each { |t| lines << t if t.executable_name == g }
-
-          lines.each do |t|
+          tasks.select{ |t| t.executable_name == g }.sort_by{ |t| t.grab r.name }.each do |t|
             rule_path = "#{g}/#{t.rule_id}.html"
             run_if_not_exist(destination+rule_path) { create_rule_page t, rule_path }
-          end
-
-          lines.sort_by{ |t| t.grab r.name }.each do |t|
             scaled_resource, _ = scale_resource r, (t.grab r.name)
             page << "<tr><td><a href=\"../#{t.rule_id}.html\">#{t.rule_id}</a></td><td>#{scaled_resource.round 3}</td></tr>\n"
           end
