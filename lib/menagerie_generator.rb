@@ -9,6 +9,7 @@ require "menagerie_generator/options"
 require "menagerie_generator/task"
 require "menagerie_generator/task_collection"
 require "menagerie_generator/page"
+require "menagerie_generator/writer"
 
 module MenagerieGenerator
 end

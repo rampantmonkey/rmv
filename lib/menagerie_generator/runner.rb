@@ -6,11 +6,12 @@ require 'open3'
 
 module MenagerieGenerator
   class Runner
-    attr_reader :debug, :source, :destination, :overwrite, :time_series, :resources, :workspace, :name, :tasks
+    attr_reader :debug, :source, :destination, :overwrite, :time_series, :resources, :workspace, :name, :tasks, :writer
 
     def initialize argv
       options = Options.new argv
       process_arguments options
+      initialize_writer
     end
 
     def run
@@ -30,13 +31,17 @@ module MenagerieGenerator
         `rm -rf #{workspace}`
       end
 
+      def initialize_writer
+        @writer = Writer.new workspace, destination, overwrite
+      end
+
       def create_group_resource_summaries histogram_size=[600,600]
         @groups.each do |g|
           @resources.each do |r|
-            path = @destination + "#{g}" + "#{r}"
-            path.mkpath
+            path =  "#{g}/#{r}"
+            (destination + path).mkpath
 
-            page = Page.new "#{name} Workflow", @destination
+            page = Page.new "#{name} Workflow"
             page << <<-INDEX
             <h1><a href="../../index.html">#{name}</a> - #{g} - #{r}</h1>
             <img src="../#{r.to_s}_#{histogram_size.first}x#{histogram_size.last}_hist.png" class="center" />
@@ -48,8 +53,8 @@ module MenagerieGenerator
             @tasks.each { |t| lines << t if t.executable_name == g }
 
             lines.each do |t|
-              rule_path = @destination + "#{g}" + "#{t.rule_id}.html"
-              run_if_not_exist(rule_path) { create_rule_page t, rule_path }
+              rule_path = "#{g}/#{t.rule_id}.html"
+              run_if_not_exist(destination+rule_path) { create_rule_page t, rule_path }
             end
 
             lines.sort_by{ |t| t.grab r.name }.each do |t|
@@ -62,8 +67,8 @@ module MenagerieGenerator
 
             page << "</table>\n"
 
-            path += "index.html"
-            write_page path, page
+            path += "/index.html"
+            write path, page
           end
         end
       end
@@ -82,18 +87,8 @@ module MenagerieGenerator
         return value, unit
       end
 
-      def write_file path, content
-        run_if_not_exist(path) do
-          path.open("w:UTF-8") { |f| f.puts content }
-          STDERR.puts "Wrote #{path}" if debug
-        end
-      end
-
-      def write_page path, page
-        run_if_not_exist(path) do
-          path.open("w:UTF-8") { |f| f.puts page.write(path) }
-          STDERR.puts "Wrote #{path}" if debug
-        end
+      def write path, content
+        writer.file path, content
       end
 
       def run_if_not_exist path
@@ -119,7 +114,7 @@ module MenagerieGenerator
       end
 
       def create_rule_page task, path
-        page = Page.new "#{name} Workflow", destination
+        page = Page.new "#{name} Workflow"
 
         page << <<-INDEX
         <h1><a href="../../index.html">#{name}</a> - #{task.executable_name} - #{task.rule_id}</h1>
@@ -150,7 +145,7 @@ module MenagerieGenerator
 
         page << "</table>\n"
 
-        write_page path, page
+        write path, page
       end
 
       def find_start_time
@@ -169,14 +164,14 @@ module MenagerieGenerator
 
       def write_usage usage
         usage.each do |u|
-          path = workspace + "aggregate_#{u.first.to_s}"
+          path = "aggregate_#{u.first.to_s}"
           output = []
           u.last.each {|k,v| output << "#{k}\t#{v}"}
           output.sort_by! do |a|
             a = a.split(/\t/)
             a[0].to_i
           end
-          write_file path, output
+          write path, output
         end
       end
 
@@ -286,8 +281,8 @@ module MenagerieGenerator
       end
 
       def make_index summary_sizes = [[1250, 500]], histogram_sizes=[[600,600]]
-        path = destination + "index.html"
-        page = Page.new "#{name} Workflow", destination
+        path = "index.html"
+        page = Page.new "#{name} Workflow"
         page << " <h1>#{name} Workflow</h1>"
 
         summary_sizes.sort_by!{|s| s.first}
@@ -305,7 +300,7 @@ module MenagerieGenerator
           end
         end
 
-        write_page path, page
+        write path, page
       end
 
       def slides height, width
