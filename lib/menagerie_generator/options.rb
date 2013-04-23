@@ -10,7 +10,7 @@ module MenagerieGenerator
       @config = {source: nil,
                  debug: false,
                  destination: nil,
-                 name: "unnamed",
+                 name: "",
                  overwrite: false,
                  workspace: Pathname.new("/tmp/menagerie")}
       parse argv
