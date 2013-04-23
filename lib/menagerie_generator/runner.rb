@@ -58,10 +58,7 @@ module MenagerieGenerator
             end
 
             lines.sort_by{ |t| t.grab r.name }.each do |t|
-              scaled_resource = t.grab r.name
-              scaled_resource /= 1024.0 if r.name.match /footprint/
-              scaled_resource /= 1024.0 if r.name.match /memory/
-              scaled_resource /= 1073741824.0 if r.name.match /byte/
+              scaled_resource, _ = scale_resource r, (t.grab r.name)
               page << "<tr><td><a href=\"../#{t.rule_id}.html\">#{t.rule_id}</a></td><td>#{scaled_resource.round 3}</td></tr>\n"
             end
 
