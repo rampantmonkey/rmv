@@ -53,7 +53,7 @@ module MenagerieGenerator
           tasks.select{ |t| t.executable_name == g }.sort_by{ |t| t.grab r.name }.each do |t|
             rule_path = "#{g}/#{t.rule_id}.html"
             run_if_not_exist(destination+rule_path) { create_rule_page t, rule_path }
-            scaled_resource, _ = scale_resource r, (t.grab r.name)
+            scaled_resource, _ = resources.scale r, (t.grab r.name)
             page << "<tr><td><a href=\"../#{t.rule_id}.html\">#{t.rule_id}</a></td><td>#{scaled_resource.round 3}</td></tr>\n"
           end
 
@@ -61,20 +61,6 @@ module MenagerieGenerator
 
           write "#{g}/#{r}/index.html", page
         end
-      end
-
-      def scale_resource r, value
-        value /= 1024.0 if r.name.match /footprint/
-        value /= 1024.0 if r.name.match /memory/
-        value /= 1073741824.0 if r.name.match /byte/
-        unit = r.unit
-        unit = "GB" if unit.match /MB/
-        unit = "GB" if r.name.match /footprint/
-        unit = "MB" if unit.match /kB/
-        unit = "GB" if r.name.match /bytes/
-        unit = yield unit if block_given?
-        unit = " (#{unit}) " unless unit == ""
-        return value, unit
       end
 
       def write path, content
@@ -96,7 +82,7 @@ module MenagerieGenerator
             start = l.first unless start
             l[0] = l.first - start
             resources.each_with_index do |r, i|
-              l[i], _ = scale_resource r, l[i]
+              l[i], _ = resources.scale r, l[i]
             end
             f.puts l.join(" ")
           end
@@ -126,7 +112,7 @@ module MenagerieGenerator
 
         page << "<tr><td>command</td><td>#{task.grab "command"}</td></tr>\n"
         resources.each_with_index do |r, i|
-          value, unit = scale_resource r, task.grab(r.name)
+          value, unit = resources.scale r, task.grab(r.name)
           img_path = "#{r.name}/#{task.rule_id}.png"
           page << "<tr><td><a href=\"#{r.name}/index.html\">#{r.name}</a></td><td>#{value.round 3} #{unit}</td>"
           page << "<td><img src=\"#{img_path}\" /></td>" if i > 0
@@ -178,7 +164,7 @@ module MenagerieGenerator
       end
 
       def time_series_format(width=1250, height=500, resource="", data_path="/tmp", outpath=nil, column=2, cpu_unit=nil)
-        _, unit = scale_resource(resource, 0) { |u| cpu_unit.nil? ? u : "%" }
+        _, unit = resources.scale(resource, 0) { |u| cpu_unit.nil? ? u : "%" }
         outpath = "#{@destination + resource.to_s}_#{width}x#{height}_aggregate.png" unless outpath
         %Q{set terminal png transparent size #{width},#{height}
         set bmargin 4
@@ -208,7 +194,7 @@ module MenagerieGenerator
               interval = data[0].to_i - start if [0, nil].include? interval
               adjusted_start = data[0].to_i - start
               @resources.each_with_index do |r, i|
-                scaled_value, _ = scale_resource r, data[i].to_i
+                scaled_value, _ = resources.scale r, data[i].to_i
                 if r.name.match /cpu_time/
                   tmp = scaled_value
                   scaled_value -= previous_cpu

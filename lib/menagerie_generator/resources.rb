@@ -32,6 +32,21 @@ module MenagerieGenerator
       @r
     end
 
+    def scale r, value
+      value /= 1024.0 if r.name.match /footprint/
+      value /= 1024.0 if r.name.match /memory/
+      value /= 1073741824.0 if r.name.match /byte/
+      unit = r.unit
+      unit = "GB" if unit.match /MB/
+      unit = "GB" if r.name.match /footprint/
+      unit = "MB" if unit.match /kB/
+      unit = "GB" if r.name.match /bytes/
+      unit = yield unit if block_given?
+      unit = " (#{unit}) " unless unit == ""
+      return value, unit
+    end
+
+
     private
       class Resource < Struct.new(:name, :unit)
         def to_s
