@@ -77,7 +77,7 @@ module RMV
           task.time_series.open.each do |l|
             next if l.match /#/
             l = l.split(/\s+/)
-            next if l.length == 0
+            next if l.length <= 1
             l = l.map {|a| a.to_i}
             start = l.first unless start
             l[0] = l.first - start
