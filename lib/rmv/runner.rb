@@ -284,6 +284,7 @@ module RMV
         <script src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js\"></script>
         <script src=\"../js/slides.min.jquery.js\"></script>
         <script>\n \$(function(){\n \$('#slides').slides({\n preload: true,\n });\n });\n </script>
+        <!-- javascript and some images licensed under Apache-2.0 by  Nathan Searles (http://nathansearles.com/) -->
         <section class="summary">
           <div id="slides">
             <div class="slides_container">
