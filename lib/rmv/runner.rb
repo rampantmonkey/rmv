@@ -67,6 +67,10 @@ module RMV
         writer.file path, content
       end
 
+      def write_workspace path, content
+        path.open("w:UTF-8") { |f| f.puts content }
+      end
+
       def run_if_not_exist path
         yield if overwrite or !path.exist?
       end
@@ -140,14 +144,14 @@ module RMV
 
       def write_usage usage
         usage.each do |u|
-          path = "aggregate_#{u.first.to_s}"
+          path = workspace + "aggregate_#{u.first.to_s}"
           output = []
           u.last.each {|k,v| output << "#{k}\t#{v}"}
           output.sort_by! do |a|
             a = a.split(/\t/)
             a[0].to_i
           end
-          write path, output
+          write_workspace path, output
         end
       end
 
