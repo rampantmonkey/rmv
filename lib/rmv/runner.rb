@@ -333,13 +333,9 @@ module RMV
       end
 
       def plot_makeflow_log log_file
-        output_path = destination + 'makeflowlog.png'
         mflog = MakeflowLog.from_file log_file
-        summary_data_file = workspace + "summarydata"
-        run_if_not_exist output_path do
-          summary_data_file.open("w:UTF-8") { |f| f.puts mflog }
-          gnuplot {|io| io.puts mflog.gnuplot_format(1250, 500, summary_data_file, destination) }
-        end
+        write "summarydata", mflog, :workspace
+        gnuplot {|io| io.puts mflog.gnuplot_format(1250, 500, workspace + "summarydata", destination) }
       end
   end
 end
