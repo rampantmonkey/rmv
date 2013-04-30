@@ -4,8 +4,7 @@ require 'pathname'
 
 module RMV
   class Writer
-    def initialize workspace, output_directory, overwrite
-      @workspace = workspace
+    def initialize output_directory, overwrite
       @tld = output_directory
       @overwrite = overwrite
     end
@@ -19,7 +18,7 @@ module RMV
     end
 
     private
-      attr_reader :workspace, :tld, :overwrite
+      attr_reader :tld, :overwrite
 
       def compute_resultant_path path
         if path.respond_to? :dirname

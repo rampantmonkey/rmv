@@ -11,7 +11,7 @@ module RMV
     def initialize argv
       options = Options.new argv
       process_arguments options
-      initialize_writer
+      initialize_writers
     end
 
     def run
@@ -31,8 +31,9 @@ module RMV
         `rm -rf #{workspace}`
       end
 
-      def initialize_writer
-        @writer = Writer.new workspace, destination, overwrite
+      def initialize_writers
+        @destination_writer = Writer.new destination, overwrite
+        @workspace_writer = Writer.new workspace, overwrite
       end
 
       def make_directories
@@ -63,12 +64,15 @@ module RMV
         end
       end
 
-      def write path, content
-        writer.file path, content
-      end
-
-      def write_workspace path, content
-        path.open("w:UTF-8") { |f| f.puts content }
+      def write path, content, location=:destination
+        case location
+        when :destination
+          @destination_writer.file path, content
+        when :workspace
+          @workspace_writer.file path, content
+        else
+          STDERR.puts "Cannot write to #{location}."
+        end
       end
 
       def run_if_not_exist path
@@ -151,14 +155,14 @@ module RMV
 
       def write_usage usage
         usage.each do |u|
-          path = workspace + "aggregate_#{u.first.to_s}"
+          path = "aggregate_#{u.first.to_s}"
           output = []
           u.last.each {|k,v| output << "#{k}\t#{v}"}
           output.sort_by! do |a|
             a = a.split(/\t/)
             a[0].to_i
           end
-          write_workspace path, output
+          write path, output, :workspace
         end
       end
 
