@@ -101,18 +101,7 @@ module RMV
         <table>
         INDEX
 
-        scratch_file = @workspace + "#{task.rule_id}.scaled"
-        run_if_not_exist(scratch_file) { scale_time_series task, scratch_file }
-
-        resources.each_with_index do |r,i|
-          next if i == 0
-          out = @destination + "#{task.executable_name}" + "#{r.name}"
-          out.mkpath
-          out += "#{task.rule_id}.png"
-          run_if_not_exist(out) do
-            gnuplot {|io| io.puts time_series_format(600, 300, r, scratch_file, out, i+1, nil )}
-          end
-        end
+        plot_task_timeseries task
 
         page << "<tr><td>command</td><td>#{task.grab "command"}</td></tr>\n"
         resources.each_with_index do |r, i|
@@ -126,6 +115,24 @@ module RMV
         page << "</table>\n"
 
         write path, page
+      end
+
+      def plot_task_timeseries task
+        scratch_file = @workspace + "#{task.rule_id}.scaled"
+        run_if_not_exist(scratch_file) { scale_time_series task, scratch_file }
+
+        resources.each_with_index {|r,i| task_resource_timeseries_plot r, i, task, scratch_file}
+      end
+
+      def task_resource_timeseries_plot resource, column, task, scratch_file
+        unless column == 0
+          out = @destination + "#{task.executable_name}" + "#{resource.name}"
+          out.mkpath
+          out += "#{task.rule_id}.png"
+          run_if_not_exist(out) do
+            gnuplot {|io| io.puts time_series_format(600, 300, resource, scratch_file, out, column+1, nil )}
+          end
+        end
       end
 
       def find_start_time
