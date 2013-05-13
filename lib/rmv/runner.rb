@@ -6,7 +6,7 @@ require 'open3'
 
 module RMV
   class Runner
-    attr_reader :debug, :source, :destination, :overwrite, :time_series, :resources, :workspace, :name, :tasks, :writer
+    attr_reader :debug, :source, :overwrite, :time_series, :resources, :workspace, :name, :tasks, :writer
 
     def initialize argv
       options = Options.new argv
@@ -32,12 +32,12 @@ module RMV
       end
 
       def initialize_writers
-        @destination_writer = Writer.new destination, overwrite
+        @destination_writer = Writer.new @destination, overwrite
         @workspace_writer = Writer.new workspace, overwrite
       end
 
       def make_directories
-        @groups.product(resources).map { |g, r| (destination + "#{g}" + "#{r}").mkpath }
+        @groups.product(resources).map { |g, r| (@destination + "#{g}" + "#{r}").mkpath }
       end
 
       def create_group_resource_summaries histogram_size=[600,600]
@@ -53,7 +53,7 @@ module RMV
 
           tasks.select{ |t| t.executable_name == g }.sort_by{ |t| t.grab r.name }.each do |t|
             rule_path = "#{g}/#{t.rule_id}.html"
-            run_if_not_exist(destination+rule_path) { create_rule_page t, rule_path }
+            create_rule_page t, rule_path
             scaled_resource, _ = resources.scale r, (t.grab r.name)
             page << "<tr><td><a href=\"../#{t.rule_id}.html\">#{t.rule_id}</a></td><td>#{scaled_resource.round 3}</td></tr>\n"
           end
@@ -246,13 +246,8 @@ module RMV
       def find_files
         time_series_paths = []
         summary_paths = []
-        Pathname.glob(@source + "log-rule*") do |path|
-          if path.to_s.match /.*summary/
-            summary_paths << path
-          else
-            time_series_paths << path
-          end
-        end
+        Pathname.glob(@source + "*.series")  { |p| time_series_paths << p }
+        Pathname.glob(@source + "*.summary") { |p| summary_paths     << p }
         @time_series = time_series_paths
         @tasks = TaskCollection.new summary_paths, time_series_paths
       end
@@ -264,7 +259,7 @@ module RMV
       end
 
       def create_histograms
-        builder = HistogramBuilder.new resources, workspace, destination, tasks
+        builder = HistogramBuilder.new resources, workspace, @destination, tasks
         @groups = builder.find_groups
         builder.build([[600,600],[250,250]]).map do |b|
           gnuplot { |io| io.puts b }
@@ -335,7 +330,7 @@ module RMV
       def plot_makeflow_log log_file
         mflog = MakeflowLog.from_file log_file
         write "summarydata", mflog, :workspace
-        gnuplot {|io| io.puts mflog.gnuplot_format(1250, 500, workspace + "summarydata", destination) }
+        gnuplot {|io| io.puts mflog.gnuplot_format(1250, 500, workspace + "summarydata", @destination) }
       end
   end
 end

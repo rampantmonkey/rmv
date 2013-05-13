@@ -9,7 +9,7 @@ module RMV
     end
 
     def rule_id
-      summary_path.to_s.match(/log-rule-(\d+)-summary/)[1]
+      summary_path.basename.to_s.split('.')[0]
     end
 
     def executable_name
