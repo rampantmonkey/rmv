@@ -20,7 +20,7 @@ module RMV
       create_histograms
       create_group_resource_summaries
       make_combined_time_series
-      plot_makeflow_log source + 'Makeflow.makeflowlog'
+      @makeflow_log_exists = plot_makeflow_log source + 'Makeflow.makeflowlog'
       make_index [[1250,500]], [[600,600],[250,250]]
       copy_static_files
       remove_temp_files unless debug
@@ -298,8 +298,8 @@ module RMV
         <section class="summary">
           <div id="slides">
             <div class="slides_container">
-              <div class="slide"><div class="item"><img src="makeflowlog_1250x500.png" /></div></div>
         INDEX
+        result << %Q{<div class="slide"><div class="item"><img src="makeflowlog_1250x500.png" /></div></div>} if @makeflow_log_exists
 
         resources.each_with_index do |r, i|
           result << %Q{ <div class="slide"><div class="item"><img src="#{r.to_s}_#{height}x#{width}_aggregate.png" /></div></div>\n} unless i == 0
@@ -328,9 +328,12 @@ module RMV
       end
 
       def plot_makeflow_log log_file
-        mflog = MakeflowLog.from_file log_file
-        write "summarydata", mflog, :workspace
-        gnuplot {|io| io.puts mflog.gnuplot_format(1250, 500, workspace + "summarydata", @destination) }
+        if log_file.exist?
+          mflog = MakeflowLog.from_file log_file
+          write "summarydata", mflog, :workspace
+          gnuplot {|io| io.puts mflog.gnuplot_format(1250, 500, workspace + "summarydata", @destination) }
+        end
+        log_file.exist?
       end
   end
 end
