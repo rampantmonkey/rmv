@@ -1,4 +1,4 @@
-require_relative "../rmv"
+require "rmv"
 
 require 'pathname'
 
@@ -22,7 +22,7 @@ module RMV
 
       def compute_resultant_path path
         if path.respond_to? :dirname
-          return tld.relative_path_from (path.dirname)
+          return tld.relative_path_from(path.dirname)
         else
           return tld + path
         end

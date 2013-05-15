@@ -1,4 +1,4 @@
-require_relative '../rmv'
+require 'rmv'
 
 module RMV
   class Task
@@ -32,7 +32,7 @@ module RMV
       attr_reader :summary, :summary_path, :time_series_path
 
       def load_summary
-        Summary.new (YAML.load_file summary_path)
+        Summary.new(YAML.load_file summary_path)
       end
   end
 end

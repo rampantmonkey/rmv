@@ -1,4 +1,4 @@
-require_relative '../rmv'
+require 'rmv'
 
 require 'pathname'
 require 'yaml'
@@ -55,7 +55,7 @@ module RMV
             rule_path = "#{g}/#{t.rule_id}.html"
             create_rule_page t, rule_path
             scaled_resource, _ = resources.scale r, (t.grab r.name)
-            page << "<tr><td><a href=\"../#{t.rule_id}.html\">#{t.rule_id}</a></td><td>#{scaled_resource.round 3}</td></tr>\n"
+            page << "<tr><td><a href=\"../#{t.rule_id}.html\">#{t.rule_id}</a></td><td>#{(scaled_resource*1000).round/1000.0}</td></tr>\n"
           end
 
           page << "</table>\n"
@@ -111,7 +111,7 @@ module RMV
         resources.each_with_index do |r, i|
           value, unit = resources.scale r, task.grab(r.name)
           img_path = "#{r.name}/#{task.rule_id}.png"
-          page << "<tr><td><a href=\"#{r.name}/index.html\">#{r.name}</a></td><td>#{value.round 3} #{unit}</td>"
+          page << "<tr><td><a href=\"#{r.name}/index.html\">#{r.name}</a></td><td>#{(value*1000).round/1000.0} #{unit}</td>"
           page << "<td><img src=\"#{img_path}\" /></td>" if i > 0
           page << "</tr>\n"
         end
@@ -158,7 +158,7 @@ module RMV
           path = "aggregate_#{u.first.to_s}"
           output = []
           u.last.each {|k,v| output << "#{k}\t#{v}"}
-          output.sort_by! do |a|
+          output = output.sort_by do |a|
             a = a.split(/\t/)
             a[0].to_i
           end
@@ -271,11 +271,11 @@ module RMV
         page = Page.new "#{name} Workflow"
         page << " <h1>#{name} Workflow</h1>"
 
-        summary_sizes.sort_by!{|s| s.first}
+        summary_sizes = summary_sizes.sort_by{|s| s.first}
         summary_large = summary_sizes.last
         page << slides(summary_large.first, summary_large.last)
 
-        histogram_sizes.sort_by! {|s| s.first}
+        histogram_sizes = histogram_sizes.sort_by {|s| s.first}
         hist_small = histogram_sizes.first
         hist_large = histogram_sizes.last
         @groups.each_with_index do |g, i|
