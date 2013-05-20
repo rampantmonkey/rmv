@@ -253,7 +253,7 @@ module RMV
       end
 
       def find_resources
-        header = time_series.first.open(&:readline).chomp
+        header = time_series.first.open{|f| f.readline}.chomp
         header = header[1..-1]
         @resources = Resources.new header
       end
