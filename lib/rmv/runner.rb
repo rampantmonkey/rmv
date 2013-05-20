@@ -81,7 +81,7 @@ module RMV
 
       def scale_time_series task, scratch_file
         start = nil
-        scratch_file.open("w:UTF-8") do |f|
+        scratch_file.open("w") do |f|
           task.time_series.open.each do |l|
             next if l.match /#/
             l = l.split(/\s+/)

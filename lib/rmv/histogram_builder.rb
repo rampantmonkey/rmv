@@ -62,7 +62,7 @@ module RMV
         base_path.mkpath
         maximum_list.each do |m|
           path = base_path + m.first.name.to_s
-          File.open(path, 'w:UTF-8') do |f|
+          File.open(path, 'w') do |f|
             m.last.each do |line|
               line = yield( m.first.name, line) if block_given?
               f.puts line
