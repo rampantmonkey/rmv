@@ -37,30 +37,34 @@ module RMV
       end
 
       def make_directories
-        @groups.product(resources).map { |g, r| (@destination + "#{g}" + "#{r}").mkpath }
+        @groups.each do |g|
+          resources.each { |r| (@destination + "#{g}" + "#{r}").mkpath }
+        end
       end
 
       def create_group_resource_summaries histogram_size=[600,600]
         make_directories
-        @groups.product(resources).map do |g, r|
-          page = Page.new "#{name} Workflow"
-          page << <<-INDEX
-          <h1><a href="../../index.html">#{name}</a> - #{g} - #{r}</h1>
-          <img src="../#{r.to_s}_#{histogram_size.first}x#{histogram_size.last}_hist.png" class="center" />
-          <table>
-          <tr><th>Rule Id</th><th>Maximum #{r}</th></tr>
-          INDEX
+        @groups.each do |g|
+          @resources.each do |r|
+            page = Page.new "#{name} Workflow"
+            page << <<-INDEX
+            <h1><a href="../../index.html">#{name}</a> - #{g} - #{r}</h1>
+            <img src="../#{r.to_s}_#{histogram_size.first}x#{histogram_size.last}_hist.png" class="center" />
+            <table>
+            <tr><th>Rule Id</th><th>Maximum #{r}</th></tr>
+            INDEX
 
-          tasks.select{ |t| t.executable_name == g }.sort_by{ |t| t.grab r.name }.each do |t|
-            rule_path = "#{g}/#{t.rule_id}.html"
-            create_rule_page t, rule_path
-            scaled_resource, _ = resources.scale r, (t.grab r.name)
-            page << "<tr><td><a href=\"../#{t.rule_id}.html\">#{t.rule_id}</a></td><td>#{(scaled_resource*1000).round/1000.0}</td></tr>\n"
+            tasks.select{ |t| t.executable_name == g }.sort_by{ |t| t.grab r.name }.each do |t|
+              rule_path = "#{g}/#{t.rule_id}.html"
+              create_rule_page t, rule_path
+              scaled_resource, _ = resources.scale r, (t.grab r.name)
+              page << "<tr><td><a href=\"../#{t.rule_id}.html\">#{t.rule_id}</a></td><td>#{(scaled_resource*1000).round/1000.0}</td></tr>\n"
+            end
+
+            page << "</table>\n"
+
+            write "#{g}/#{r}/index.html", page
           end
-
-          page << "</table>\n"
-
-          write "#{g}/#{r}/index.html", page
         end
       end
 
