@@ -15,7 +15,7 @@ module RMV
       results = []
       @grouped_maximums.each_with_index do |g, i|
         write_maximum_values(g, i){|a,b| scale_maximum a, b}
-        results.concat(format_histograms sizes, i, groups[i])
+        results.concat(format_histograms(sizes, i, groups[i]))
       end
       results
     end
