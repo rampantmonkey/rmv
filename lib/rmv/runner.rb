@@ -206,8 +206,7 @@ module RMV
         aggregate_usage = {}
         @resources.each {|r| aggregate_usage[r] = Hash.new 0}
         @time_series.each do |s|
-          lines = s.open.each
-          lines.each do |l|
+          s.open.each do |l|
             unless l.match /^#/
               data = l.split /\s+/
               interval = data[0].to_i - start if [0, nil].include? interval
