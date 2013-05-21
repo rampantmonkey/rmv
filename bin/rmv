@@ -7,5 +7,7 @@ $:.unshift File.expand_path("../../lib",__FILE__)
 
 require 'rmv'
 
+RMV::GNUPLOT_VERSION = `gnuplot --version | awk '{print $2}'`.to_f
+
 runner = RMV::Runner.new ARGV
 runner.run
