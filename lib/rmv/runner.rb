@@ -256,8 +256,12 @@ module RMV
       end
 
       def find_resources
-        header = time_series.first.open{|f| f.readline}.chomp
-        header = header[1..-1]
+        if time_series.length == 0
+          header = "wall_clock(seconds)	concurrent_processes	num_process_accum	cpu_time(seconds)	virtual_memory(kB)	resident_memory(kB)	swap_memory(kB)	bytes_read	bytes_written	workdir_number_files_dirs	workdir_footprint(MB)	"
+        else
+          header = time_series.first.open{|f| f.readline}.chomp
+          header = header[1..-1]
+        end
         @resources = Resources.new header
       end
 
@@ -276,7 +280,7 @@ module RMV
 
         summary_sizes = summary_sizes.sort_by{|s| s.first}
         summary_large = summary_sizes.last
-        page << slides(summary_large.first, summary_large.last)
+        page << slides(summary_large.first, summary_large.last) if time_series.length > 0 or @makeflow_log_exists
 
         histogram_sizes = histogram_sizes.sort_by {|s| s.first}
         hist_small = histogram_sizes.first
@@ -306,7 +310,7 @@ module RMV
 
         resources.each_with_index do |r, i|
           result << %Q{ <div class="slide"><div class="item"><img src="#{r.to_s}_#{height}x#{width}_aggregate.png" /></div></div>\n} unless i == 0
-        end
+        end if time_series.length > 0
 
         result << <<-INDEX
            </div>

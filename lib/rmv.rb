@@ -1,4 +1,5 @@
 require "rmv/version"
+require "rmv/black_hole"
 require "rmv/runner"
 require "rmv/makeflow_log"
 require "rmv/summary"
