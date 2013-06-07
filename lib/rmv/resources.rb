@@ -34,13 +34,14 @@ module RMV
 
     def scale r, value
       value /= 1024.0 if r.name.match /footprint/
-      value /= 1024.0 if r.name.match /memory/
+#      value /= 1024.0 if r.name.match /memory/
       value /= 1073741824.0 if r.name.match /byte/
       unit = r.unit
       unit = "GB" if unit.match /MB/
       unit = "GB" if r.name.match /footprint/
       unit = "MB" if unit.match /kB/
       unit = "GB" if r.name.match /bytes/
+      unit = "MB" if r.name.match /memory/
       unit = yield unit if block_given?
       unit = " (#{unit}) " unless unit == ""
       return value, unit
@@ -55,7 +56,7 @@ module RMV
       end
 
       def translate_resource_name name
-        name.gsub /clock/, 'time'
+        name.gsub(/clock/, 'time').gsub(/concurrent_/, '').gsub(/ss_accum/, 'sses').gsub(/ber_files_dirs/, '_files')
       end
   end
 end
