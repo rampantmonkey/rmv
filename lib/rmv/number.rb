@@ -5,12 +5,24 @@ module RMV
     attr_reader :value, :unit
 
     def initialize value, unit
-      @value = value
+      @value = value.to_f
       if unit.to_s.length == 2
         @unit = unit
       else
         @unit = ""
       end
+    end
+
+    def to_f
+      value.to_f
+    end
+
+    def <=> other
+      value <=> other.value
+    end
+
+    def < other
+      value < other.value
     end
 
     def prefix
