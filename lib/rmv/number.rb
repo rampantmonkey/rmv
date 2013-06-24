@@ -31,6 +31,8 @@ module RMV
 
     def base_value
       case prefix
+      when 'u'
+        value * 10**(-6)
       when 'K'
         value * 1024
       when 'M'
@@ -47,6 +49,8 @@ module RMV
     def in new_unit
       new_prefix = new_unit.to_s[0]
       case new_prefix
+      when 'u'
+        base_value * 10**6
       when 'K'
         base_value / 1024.0
       when 'M'

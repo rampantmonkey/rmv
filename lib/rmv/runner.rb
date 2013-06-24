@@ -180,7 +180,7 @@ module RMV
         lowest = t1.grab :start
         t2 = tasks.last
         highest = t2.grab :start
-        lowest < highest ? lowest.value : highest.value
+        lowest < highest ? lowest.in("u") : highest.in("u")
       end
 
       def make_combined_time_series
@@ -251,7 +251,7 @@ module RMV
             unless l.match /^#/
               data = l.split /\s+/
               interval = data[0].to_i - start if [0, nil].include? interval
-              adjusted_start = data[0].to_i - start
+              adjusted_start = (data[0].to_i - start)/10.0**6
               @resources.each_with_index do |r, i|
                 scaled_value = data[i].to_i
                 scaled_value /= case r
