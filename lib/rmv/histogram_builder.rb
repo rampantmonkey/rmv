@@ -59,7 +59,7 @@ module RMV
         when /memory/
           value.in('MB')
         else
-          value
+          value.value
         end
       end
 
