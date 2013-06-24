@@ -29,15 +29,6 @@ module RMV
         end
       end
 
-#      def translate_keys h
-#        result = Hash.new
-#        h.each do |k,v|
-#          new_key = k.gsub /max_/, ''
-#          result[new_key.to_sym] = v
-#        end
-#        result
-#      end
-
       def contents
         @contents
       end
