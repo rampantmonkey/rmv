@@ -15,7 +15,12 @@ args = option_parser.parse_args()
 ## pull source and destination from args
 source_directory      = args.source
 destination_directory = args.destination
+
 ## assert source exists
+if not os.path.isdir(source_directory):
+  print "source directory does not exist"
+  exit(1)
+
 ## create destination base directory
 
 # run
