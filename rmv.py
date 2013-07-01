@@ -29,6 +29,12 @@ except:
 
 # run
 ## find files
+summary_paths = []
+for r, d, f in os.walk(source_directory):
+  for files in f:
+    if files.endswith(".summary"):
+      summary_paths.append(os.path.join(r, files))
+
 ## find resources
 ## create histograms
 ## create group resource summaries
