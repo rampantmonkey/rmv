@@ -13,6 +13,8 @@ option_parser.add_argument("destination", help="the desired output directory")
 args = option_parser.parse_args()
 
 ## pull source and destination from args
+source_directory      = args.source
+destination_directory = args.destination
 ## assert source exists
 ## create destination base directory
 
