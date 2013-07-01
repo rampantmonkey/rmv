@@ -22,6 +22,10 @@ if not os.path.isdir(source_directory):
   exit(1)
 
 ## create destination base directory
+try:
+  os.makedirs(destination_directory)
+except:
+  pass
 
 # run
 ## find files
