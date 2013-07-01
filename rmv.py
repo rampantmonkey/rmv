@@ -48,6 +48,29 @@ resources = ["wall_time",
              "workdir_footprint"
              ]
 
+## load summary data by groups
+groups = {}
+for sp in summary_paths:
+  data_stream = open(sp, 'r')
+  summary = {}
+  for line in data_stream:
+    data = line.strip().split(':', 2)
+    data = [x.strip() for x in data]
+    key = data[0]
+    value = data[1]
+    summary[key] = value
+
+  ### determine group name
+  group_name = summary.get('command').split(' ')[0]
+
+  ### insert into groups
+  if groups.get(group_name) == None:
+    groups[group_name] = [summary]
+  else:
+    groups[group_name].append(summary)
+
+  data_stream.close()
+
 ## create histograms
 ## create group resource summaries
 ## make combined time series
