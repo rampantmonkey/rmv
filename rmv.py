@@ -36,6 +36,18 @@ for r, d, f in os.walk(source_directory):
       summary_paths.append(os.path.join(r, files))
 
 ## find resources
+resources = ["wall_time",
+             "cpu_time",
+             "max_concurrent_processes",
+             "virtual_memory",
+             "resident_memory",
+             "swap_memory",
+             "bytes_read",
+             "bytes_written",
+             "workdir_num_files",
+             "workdir_footprint"
+             ]
+
 ## create histograms
 ## create group resource summaries
 ## make combined time series
