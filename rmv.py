@@ -2,6 +2,8 @@
 
 # initialize
 ## find gnuplot version
+import os
+GNUPLOT_VERSION = float(os.popen("gnuplot --version | awk '{print $2}'").read())
 ## get args
 ## pull source and destination from args
 ## assert source exists
