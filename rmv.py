@@ -119,7 +119,13 @@ for r in resources:
     gnuplotformat += "set xrange [0:*]\n"
     gnuplotformat += "set xlabel \"" + r + "\"\n"
     gnuplotformat += "plot \"" + data_path + "\" using (bin($1,binwidth)):1 smooth freq w boxes\n"
-    print gnuplotformat;
+
+    ## call gnuplot
+    (child_stdin, child_stdout, child_stderr) = os.popen3("gnuplot")
+    child_stdin.write("%s\n" % gnuplotformat)
+    child_stdin.close()
+    child_stdout.close()
+    child_stderr.close()
 
 ## create group resource summaries
 ## make combined time series
