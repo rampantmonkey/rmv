@@ -81,6 +81,24 @@ for sp in summary_paths:
   data_stream.close()
 
 ## create histograms
+for r in resources:
+  for group_name in groups:
+    maximums = []
+    for d in groups[group_name]:
+      maximums.append(d.get(r))
+    directory = workspace + "/" + group_name
+    try:
+      os.makedirs(directory)
+    except:
+      pass
+    filename = directory + "/" + r
+    f = open(filename, "w")
+    for m in maximums:
+      f.write("%s\n" % m)
+    f.close()
+
+
+
 ## create group resource summaries
 ## make combined time series
 ## plot makeflow log
