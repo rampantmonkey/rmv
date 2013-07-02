@@ -69,6 +69,8 @@ for sp in summary_paths:
 
   ### determine group name
   group_name = summary.get('command').split(' ')[0]
+  while group_name[0] == '.' or group_name[0] == '/':
+    group_name = group_name[1:]
 
   ### insert into groups
   if groups.get(group_name) == None:
