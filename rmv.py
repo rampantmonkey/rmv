@@ -68,6 +68,7 @@ for sp in summary_paths:
     key = data[0]
     value = data[1]
     summary[key] = value
+  summary['filename'] = os.path.basename(sp)
 
   ### determine group name
   group_name = summary.get('command').split(' ')[0]
@@ -101,15 +102,15 @@ for r in resources:
     f.close()
 
     ### fill in gnuplot template
-    image_path = destination_directory + "/" + group_name
+    out_path = destination_directory + "/" + group_name
     largest = max(maximums)
     try:
-      os.makedirs(image_path)
+      os.makedirs(out_path)
     except:
       pass
     width = 600
     height = 600
-    image_path += "/" + r + "_" + str(width) + "x" + str(height) + "_hist.png"
+    image_path = out_path + "/" + r + "_" + str(width) + "x" + str(height) + "_hist.png"
     if largest > 40:
       binwidth = largest/40.0
     else:
@@ -127,12 +128,37 @@ for r in resources:
     gnuplotformat += "set xlabel \"" + r + "\"\n"
     gnuplotformat += "plot \"" + data_path + "\" using (bin($1,binwidth)):1 smooth freq w boxes\n"
 
-    ## call gnuplot
+    ### call gnuplot
     (child_stdin, child_stdout, child_stderr) = os.popen3("gnuplot")
     child_stdin.write("%s\n" % gnuplotformat)
     child_stdin.close()
     child_stdout.close()
     child_stderr.close()
+
+    ## create html for group+resource
+    page  = "<!doctype html>\n"
+    page += "<meta name=\"viewport\" content=\"initial-scale=1.0, width=device-width\" />\n"
+    page += "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen, projection\" href\"" + "../../css/style.css\" />\n"
+    page += "<title>Workflow</title>\n"
+    page += "<div class=\"content\">\n"
+    page += "<h1><a href=\"../../index.html\">" + name + "</a> - " + group_name + " - " + r + "</h1>\n"
+    page += "<img src=\"../" + r + "_" + str(width) + "x" + str(height) + "_hist.png\" class=\"center\" />\n"
+    page += "<table>\n"
+    page += "<tr><th>Rule Id</th><th>Maximum " + r + "</th></tr>\n"
+
+    page += "</table>\n"
+    page += "</div>\n"
+
+    index_path = out_path + "/" + r
+    try:
+      os.makedirs(index_path)
+    except:
+      pass
+    index_path += "/" + "index.html"
+    f = open(index_path, "w")
+    f.write("%s\n" % page)
+    f.close()
+
 
 ## create group resource summaries
 ## make combined time series
