@@ -81,6 +81,7 @@ for sp in summary_paths:
   data_stream.close()
 
 ## create histograms
+### write data by group and resource
 for r in resources:
   for group_name in groups:
     maximums = []
@@ -91,13 +92,34 @@ for r in resources:
       os.makedirs(directory)
     except:
       pass
-    filename = directory + "/" + r
-    f = open(filename, "w")
+    data_path = directory + "/" + r
+    f = open(data_path, "w")
     for m in maximums:
       f.write("%s\n" % m)
     f.close()
-
-
+    ### fill in gnuplot template
+    image_path = destination_directory + "/" + group_name
+    try:
+      os.makedirs(image_path)
+    except:
+      pass
+    width = 600
+    height = 600
+    image_path += "/" + r + "_" + str(width) + "x" + str(height) + "_hist.png"
+    binwidth = 1
+    gnuplotformat =  "set terminal png transparent size " + str(width) + "," + str(height) + "\n"
+    gnuplotformat += "unset key\n"
+    gnuplotformat += "set ylabel \"Frequency\"\n"
+    gnuplotformat += "set output \"" + image_path + "\"\n"
+    gnuplotformat += "binwidth=" + str(binwidth) + "\n"
+    gnuplotformat += "set boxwidth binwidth*0.9 absolute\n"
+    gnuplotformat += "set style fill solid 0.5\n"
+    gnuplotformat += "bin(x,width)=width*floor(x/width)\n"
+    gnuplotformat += "set yrange [0:*]\n"
+    gnuplotformat += "set xrange [0:*]\n"
+    gnuplotformat += "set xlabel \"" + r + "\"\n"
+    gnuplotformat += "plot \"" + data_path + "\" using (bin($1,binwidth)):1 smooth freq w boxes\n"
+    print gnuplotformat;
 
 ## create group resource summaries
 ## make combined time series
