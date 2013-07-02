@@ -86,7 +86,7 @@ for r in resources:
   for group_name in groups:
     maximums = []
     for d in groups[group_name]:
-      maximums.append(d.get(r))
+      maximums.append(float(d.get(r).split(' ')[0]))
     directory = workspace + "/" + group_name
     try:
       os.makedirs(directory)
@@ -95,10 +95,12 @@ for r in resources:
     data_path = directory + "/" + r
     f = open(data_path, "w")
     for m in maximums:
-      f.write("%s\n" % m)
+      f.write("%d\n" % m)
     f.close()
+
     ### fill in gnuplot template
     image_path = destination_directory + "/" + group_name
+    largest = max(maximums)
     try:
       os.makedirs(image_path)
     except:
@@ -106,7 +108,10 @@ for r in resources:
     width = 600
     height = 600
     image_path += "/" + r + "_" + str(width) + "x" + str(height) + "_hist.png"
-    binwidth = 1
+    if largest > 40:
+      binwidth = largest/40.0
+    else:
+      binwidth = 1
     gnuplotformat =  "set terminal png transparent size " + str(width) + "," + str(height) + "\n"
     gnuplotformat += "unset key\n"
     gnuplotformat += "set ylabel \"Frequency\"\n"
