@@ -145,7 +145,10 @@ for r in resources:
     page += "<img src=\"../" + r + "_" + str(width) + "x" + str(height) + "_hist.png\" class=\"center\" />\n"
     page += "<table>\n"
     page += "<tr><th>Rule Id</th><th>Maximum " + r + "</th></tr>\n"
-
+    for d in groups[group_name]:
+      rule_id = d.get('filename').split('.')
+      rule_id = rule_id[0].split('-')[-1]
+      page += "<tr><td><a href=\"../" + rule_id + ".html\">" + rule_id + "</a></td><td>" + str(d.get(r)) + "</td></tr>\n"
     page += "</table>\n"
     page += "</div>\n"
 
