@@ -27,6 +27,13 @@ try:
 except:
   pass
 
+## create temporary workspace
+workspace = '/tmp/rmv'
+try:
+  os.makedirs(workspace)
+except:
+  pass
+
 # run
 ## find files
 summary_paths = []
