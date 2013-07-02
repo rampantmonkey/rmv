@@ -10,11 +10,13 @@ import argparse
 option_parser = argparse.ArgumentParser(description='Visualize resource monitor data')
 option_parser.add_argument("source", help="the directory containing your data")
 option_parser.add_argument("destination", help="the desired output directory")
+option_parser.add_argument("name", help="the name of the workflow")
 args = option_parser.parse_args()
 
 ## pull source and destination from args
 source_directory      = args.source
 destination_directory = args.destination
+name                  = args.name
 
 ## assert source exists
 if not os.path.isdir(source_directory):
