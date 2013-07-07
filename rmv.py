@@ -133,16 +133,32 @@ def write_maximums(maximums, resource, group_name, base_directory):
   f.close()
   return data_path
 
-def create_individual_pages(groups, destination_directory, name, resources):
+def task_has_timeseries(task, source_directory):
+  base_name = task.get('filename').split('.')[0]
+  timeseries_name = base_name + '.series'
+  try:
+    f = open(source_directory + "/" + timeseries_name)
+    f.close()
+  except:
+    return None
+  return timeseries_name
+
+def create_individual_pages(groups, destination_directory, name, resources, source_directory):
   for group_name in groups:
     for task in groups[group_name]:
-      ## Make individual task page
+      timeseries_file = task_has_timeseries(task, source_directory)
+      if timeseries_file != None:
+        # Generate time series plots
+        # Set flag to add plots to page
+        print timeseries_file
+        print task.get('filename')
       page  = "<html>\n"
       page += "<h1><a href=\"../index.html\">" + name + "</a> - " + group_name + " - " + rule_id_for_task(task) + "</h1>\n"
       page += "<table>\n"
       page += "<tr><td>command</td><td>" + task.get('command') + "</td></tr>\n"
       for r in resources:
         page += "<tr><td><a href=\"" + r + "/index.html\">" + r + "</a></td><td>" + task.get(r) + "</td>\n"
+      page += "</html>\n"
       f = open(destination_directory + "/" + group_name + "/" + rule_id_for_task(task) + ".html", "w")
       f.write("%s\n" % page)
       f.close()
@@ -162,6 +178,7 @@ def  create_main_page(group_names, name, resources, destination, hist_height=600
     for r in resources:
       content += '<a href="' + g + '/' + r + '/index.html"><img src="' + g + "/" + r + "_" + str(hist_width) + "x" + str(hist_height) + '_hist.png" /></a>\n'
     content += "<hr />\n\n"
+  content += "</div>\n"
   f.write("%s\n" % content)
   f.close()
 
@@ -218,7 +235,7 @@ def main():
 
       resource_group_page(name, group_name, r, hist_large, hist_large, groups[group_name], out_path)
 
-  create_individual_pages(groups, destination_directory, name, resources)
+  create_individual_pages(groups, destination_directory, name, resources, source_directory)
 
   create_main_page(groups.keys(), name, resources, destination_directory, hist_small, hist_small)
   ## create group resource summaries
