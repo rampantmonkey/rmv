@@ -138,7 +138,7 @@ def create_individual_pages(groups, destination_directory, name, resources):
     for task in groups[group_name]:
       ## Make individual task page
       page  = "<html>\n"
-      page += "<h1><a href=\"../../index.html\">" + name + "</a> - " + group_name + " - " + rule_id_for_task(task) + "</h1>\n"
+      page += "<h1><a href=\"../index.html\">" + name + "</a> - " + group_name + " - " + rule_id_for_task(task) + "</h1>\n"
       page += "<table>\n"
       page += "<tr><td>command</td><td>" + task.get('command') + "</td></tr>\n"
       for r in resources:
@@ -146,6 +146,24 @@ def create_individual_pages(groups, destination_directory, name, resources):
       f = open(destination_directory + "/" + group_name + "/" + rule_id_for_task(task) + ".html", "w")
       f.write("%s\n" % page)
       f.close()
+
+def  create_main_page(group_names, name, resources, destination, hist_height=600, hist_width=600):
+  out_path = destination + "/index.html"
+  f = open(out_path, "w")
+  content  = "<!doctype html>\n"
+  content += "<meta charset=\"UTF-8\">\n"
+  content += '<meta name="viewport" content="initial-scale=1.0, width=device-width" />' + "\n"
+  content += '<link rel="stylesheet" type="text/css" media="screen, projection" href="css/style.css" />' + "\n"
+  content += '<title>' + name + "Workflow</title>\n"
+  content += '<div class="content">' + "\n"
+  content += '<h1>' + name + "Workflow</h1>\n"
+  for g in group_names:
+    content += '<h2>' + g + "</h2>\n"
+    for r in resources:
+      content += '<a href="' + g + '/' + r + '/index.html"><img src="' + g + "/" + r + "_" + str(hist_width) + "x" + str(hist_height) + '_hist.png" /></a>\n'
+    content += "<hr />\n\n"
+  f.write("%s\n" % content)
+  f.close()
 
 def main():
   # initialize
@@ -179,23 +197,30 @@ def main():
 
   groups = load_summaries_by_group(summary_paths)
 
+  hist_large = 600
+  hist_small = 250
   for r in resources:
     for group_name in groups:
       maximums = find_maximums(groups[group_name], r)
       data_path = write_maximums(maximums, r, group_name, workspace)
 
-      width = 600
-      height = 600
       out_path = destination_directory + "/" + group_name
       make_path(out_path)
-      image_path = out_path + "/" + r + "_" + str(width) + "x" + str(height) + "_hist.png"
       binwidth = compute_binwidth(max(maximums))
-      gnuplot_format = fill_histogram_template(width, height, image_path, binwidth, r, data_path)
+
+      image_path = out_path + "/" + r + "_" + str(hist_large) + "x" + str(hist_large) + "_hist.png"
+      gnuplot_format = fill_histogram_template(hist_large, hist_large, image_path, binwidth, r, data_path)
       gnuplot(gnuplot_format)
 
-      resource_group_page(name, group_name, r, width, height, groups[group_name], out_path)
+      image_path = out_path + "/" + r + "_" + str(hist_small) + "x" + str(hist_small) + "_hist.png"
+      gnuplot_format = fill_histogram_template(hist_small, hist_small, image_path, binwidth, r, data_path)
+      gnuplot(gnuplot_format)
+
+      resource_group_page(name, group_name, r, hist_large, hist_large, groups[group_name], out_path)
 
   create_individual_pages(groups, destination_directory, name, resources)
+
+  create_main_page(groups.keys(), name, resources, destination_directory, hist_small, hist_small)
   ## create group resource summaries
   ## make combined time series
   ## plot makeflow log
