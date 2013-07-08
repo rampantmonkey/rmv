@@ -210,6 +210,40 @@ def create_main_page(group_names, name, resources, destination, hist_height=600,
   f.write("%s\n" % content)
   f.close()
 
+def to_base(value, unit):
+  prefix = unit[0]
+  if   prefix == "K":
+    value *= 1024
+  elif prefix == "M":
+    value *= 1024**2
+  elif prefix == "G":
+    value *= 1024**3
+  elif prefix == "T":
+    value *= 1024**4
+  return value
+
+def to_target(value, target):
+  prefix = target[0]
+  if   prefix == "K":
+    value /= 1024
+  elif prefix == "M":
+    value /= 1024**2
+  elif prefix == "G":
+    value /= 1024**3
+  elif prefix == "T":
+    value /= 1024**4
+  return value
+
+def scale_value(initial, target_unit=" "):
+  value, unit = initial.split(' ', 2)
+  value = float(value)
+  unit = unit.strip()
+
+  v = to_target(to_base(value, unit), target_unit)
+
+  return v
+
+
 def main():
   # initialize
   GNUPLOT_VERSION = find_gnuplot_version()
