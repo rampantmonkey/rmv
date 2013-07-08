@@ -143,27 +143,55 @@ def task_has_timeseries(task, source_directory):
     return None
   return timeseries_name
 
+def fill_in_time_series_format(resource, data_path, column, out_path, width=1250, height=500):
+   commands  = 'set terminal png transparent size ' + str(width) + ',' + str(height) + "\n"
+   commands += "set bmargin 4\n"
+   commands += "unset key\n"
+   commands += 'set xlabel "Time (seconds)" offset 0,-2 character' + "\n"
+   commands += 'set ylabel "' + resource + '" offset 0,-2 character' + "\n"
+   commands += 'set output "' + out_path + '"' + "\n"
+   commands += "set yrange [0:*]\n"
+   commands += "set xrange [0:*]\n"
+   commands += "set xtics right rotate by -45\n"
+   commands += "set bmargin 7\n"
+   commands += 'plot"' + data_path + '" using 1:' + str(column) + ' w lines lw 5 lc rgb"#465510"' + "\n"
+   return commands
+
+def generate_time_series_plot(resource, data_path, column, out_path, width, height):
+  commands = fill_in_time_series_format(resource, data_path, column, out_path, width, height)
+  gnuplot(commands)
+
+
 def create_individual_pages(groups, destination_directory, name, resources, source_directory):
   for group_name in groups:
     for task in groups[group_name]:
       timeseries_file = task_has_timeseries(task, source_directory)
+      has_timeseries = False
       if timeseries_file != None:
-        # Generate time series plots
-        # Set flag to add plots to page
-        print timeseries_file
-        print task.get('filename')
+        has_timeseries = True
+        column = 0
+        for r in resources:
+          out_path = destination_directory + '/' + group_name + '/' + r + '/' + rule_id_for_task(task) + '.png'
+          data_path = source_directory + '/' + timeseries_file
+          if column > 0:
+            generate_time_series_plot(r, data_path, column, out_path, 600, 300)
+          column += 1
       page  = "<html>\n"
       page += "<h1><a href=\"../index.html\">" + name + "</a> - " + group_name + " - " + rule_id_for_task(task) + "</h1>\n"
       page += "<table>\n"
       page += "<tr><td>command</td><td>" + task.get('command') + "</td></tr>\n"
       for r in resources:
-        page += "<tr><td><a href=\"" + r + "/index.html\">" + r + "</a></td><td>" + task.get(r) + "</td>\n"
+        page += "<tr><td><a href=\"" + r + "/index.html\">" + r + "</a></td><td>" + task.get(r) + "</td>"
+        if has_timeseries and r != 'wall_time':
+          image_path = r + '/' + rule_id_for_task(task) + '.png'
+          page += '<td><img src="' + image_path +'" /></td>'
+        page += "</tr>\n"
       page += "</html>\n"
       f = open(destination_directory + "/" + group_name + "/" + rule_id_for_task(task) + ".html", "w")
       f.write("%s\n" % page)
       f.close()
 
-def  create_main_page(group_names, name, resources, destination, hist_height=600, hist_width=600):
+def create_main_page(group_names, name, resources, destination, hist_height=600, hist_width=600):
   out_path = destination + "/index.html"
   f = open(out_path, "w")
   content  = "<!doctype html>\n"
