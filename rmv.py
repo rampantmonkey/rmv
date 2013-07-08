@@ -100,7 +100,10 @@ def resource_group_page(name, group_name, resource, width, height, tasks, out_pa
   page += "<img src=\"../" + resource + "_" + str(width) + "x" + str(height) + "_hist.png\" class=\"center\" />\n"
   page += "<table>\n"
   page += "<tr><th>Rule Id</th><th>Maximum " + resource +  "</th></tr>\n"
-  for d in tasks:
+  comp = lambda x,y: cmp(float(x.get(resource).split(' ')[0]), float(y.get(resource).split(' ')[0]))
+  sorted_tasks = sorted(tasks, comp, reverse=True)
+  print sorted_tasks
+  for d in sorted_tasks:
     rule_id = rule_id_for_task(d)
     page += "<tr><td><a href=\"../" + rule_id + ".html\">" + rule_id + "</a></td><td>" + str(d.get(resource)) + "</td></tr>\n"
   page += "</table>\n"
