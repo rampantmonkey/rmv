@@ -120,7 +120,7 @@ def compute_binwidth(maximum_value):
 def find_maximums(tasks, resource):
   maximums = []
   for d in tasks:
-    maximums.append(float(d.get(resource).split(' ')[0]))
+    maximums.append(d.get(resource))
   return maximums
 
 def write_maximums(maximums, resource, group_name, base_directory):
@@ -132,6 +132,13 @@ def write_maximums(maximums, resource, group_name, base_directory):
     f.write("%d\n" % m)
   f.close()
   return data_path
+
+def scale_maximums(maximums, unit):
+  result = []
+  for m in maximums:
+    m = scale_value(m, unit)
+    result.append(m)
+  return result
 
 def task_has_timeseries(task, source_directory):
   base_name = task.get('filename').split('.')[0]
@@ -262,17 +269,18 @@ def main():
   # run
   summary_paths = find_summary_paths(source_directory)
 
-  resources = ["wall_time",
-               "cpu_time",
-               "max_concurrent_processes",
-               "virtual_memory",
-               "resident_memory",
-               "swap_memory",
-               "bytes_read",
-               "bytes_written",
-               "workdir_num_files",
-               "workdir_footprint"
-               ]
+  resource_units = {"wall_time": "s",
+                    "cpu_time": "s",
+                    "max_concurrent_processes": " ",
+                    "virtual_memory":  "MB",
+                    "resident_memory": "MB",
+                    "swap_memory":     "MB",
+                    "bytes_read":      "GB",
+                    "bytes_written":   "GB",
+                    "workdir_num_files": " ",
+                    "workdir_footprint": "GB"
+                    }
+  resources = resource_units.keys()
 
   groups = load_summaries_by_group(summary_paths)
 
@@ -281,6 +289,7 @@ def main():
   for r in resources:
     for group_name in groups:
       maximums = find_maximums(groups[group_name], r)
+      maximums = scale_maximums(maximums, resource_units.get(r))
       data_path = write_maximums(maximums, r, group_name, workspace)
 
       out_path = destination_directory + "/" + group_name
