@@ -82,7 +82,7 @@ def fill_histogram_template(width, height, image_path, binwidth, resource_name, 
   if unit != " ":
     result += " (" + unit + ")"
   result += "\"\n"
-  result += "plot \"" + data_path + "\" using (bin($1,binwidth)):1 smooth freq w boxes\n"
+  result += "plot \"" + data_path + "\" using (bin($1,binwidth)):(1.0) smooth freq w boxes\n"
   return result
 
 def rule_id_for_task(task):
@@ -102,7 +102,6 @@ def resource_group_page(name, group_name, resource, width, height, tasks, out_pa
   page += "<tr><th>Rule Id</th><th>Maximum " + resource +  "</th></tr>\n"
   comp = lambda x,y: cmp(float(x.get(resource).split(' ')[0]), float(y.get(resource).split(' ')[0]))
   sorted_tasks = sorted(tasks, comp, reverse=True)
-  print sorted_tasks
   for d in sorted_tasks:
     rule_id = rule_id_for_task(d)
     page += "<tr><td><a href=\"../" + rule_id + ".html\">" + rule_id + "</a></td><td>" + str(d.get(resource)) + "</td></tr>\n"
