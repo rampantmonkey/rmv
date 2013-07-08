@@ -67,7 +67,7 @@ def gnuplot(commands):
   child_stdout.close()
   child_stderr.close()
 
-def fill_histogram_template(width, height, image_path, binwidth, resource_name, data_path):
+def fill_histogram_template(width, height, image_path, binwidth, resource_name, unit, data_path):
   result  = "set terminal png transparent size " + str(width) + "," + str(height) + "\n"
   result += "unset key\n"
   result += "set ylabel \"Frequency\"\n"
@@ -78,7 +78,10 @@ def fill_histogram_template(width, height, image_path, binwidth, resource_name, 
   result += "bin(x,width)=width*floor(x/width)\n"
   result += "set yrange [0:*]\n"
   result += "set xrange [0:*]\n"
-  result += "set xlabel \"" + resource_name + "\"\n"
+  result += "set xlabel \"" + resource_name
+  if unit != " ":
+    result += " (" + unit + ")"
+  result += "\"\n"
   result += "plot \"" + data_path + "\" using (bin($1,binwidth)):1 smooth freq w boxes\n"
   return result
 
@@ -287,9 +290,10 @@ def main():
   hist_large = 600
   hist_small = 250
   for r in resources:
+    unit = resource_units.get(r)
     for group_name in groups:
       maximums = find_maximums(groups[group_name], r)
-      maximums = scale_maximums(maximums, resource_units.get(r))
+      maximums = scale_maximums(maximums, unit)
       data_path = write_maximums(maximums, r, group_name, workspace)
 
       out_path = destination_directory + "/" + group_name
@@ -297,11 +301,11 @@ def main():
       binwidth = compute_binwidth(max(maximums))
 
       image_path = out_path + "/" + r + "_" + str(hist_large) + "x" + str(hist_large) + "_hist.png"
-      gnuplot_format = fill_histogram_template(hist_large, hist_large, image_path, binwidth, r, data_path)
+      gnuplot_format = fill_histogram_template(hist_large, hist_large, image_path, binwidth, r, unit, data_path)
       gnuplot(gnuplot_format)
 
       image_path = out_path + "/" + r + "_" + str(hist_small) + "x" + str(hist_small) + "_hist.png"
-      gnuplot_format = fill_histogram_template(hist_small, hist_small, image_path, binwidth, r, data_path)
+      gnuplot_format = fill_histogram_template(hist_small, hist_small, image_path, binwidth, r, unit, data_path)
       gnuplot(gnuplot_format)
 
       resource_group_page(name, group_name, r, hist_large, hist_large, groups[group_name], out_path)
