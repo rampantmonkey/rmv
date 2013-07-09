@@ -173,18 +173,34 @@ def generate_time_series_plot(resource, data_path, column, out_path, width, heig
   commands = fill_in_time_series_format(resource, data_path, column, out_path, width, height)
   gnuplot(commands)
 
+def scale_time_series(source_directory, data_file, units):
+  start = -1
+  out_file_path = '/tmp/rmv/' + data_file + '.scaled'
+  out_stream = open(out_file_path, 'w')
+  data_stream = open(source_directory + '/' + data_file, 'r')
+  for line in data_stream:
+    if line[0] == '#':
+      continue
+    data = line.split()
+    if start < 0:
+      start = data[0]
+    data[0] = str((float(data[0]) - float(start))/10e5)
+    out_stream.write("%s\n" % str.join(' ', data))
+  data_stream.close()
+  out_stream.close()
+  return out_file_path
 
-def create_individual_pages(groups, destination_directory, name, resources, source_directory):
+def create_individual_pages(groups, destination_directory, name, resources, units, source_directory):
   for group_name in groups:
     for task in groups[group_name]:
       timeseries_file = task_has_timeseries(task, source_directory)
       has_timeseries = False
       if timeseries_file != None:
         has_timeseries = True
+        data_path = scale_time_series(source_directory, timeseries_file, units)
         column = 0
         for r in resources:
           out_path = destination_directory + '/' + group_name + '/' + r + '/' + rule_id_for_task(task) + '.png'
-          data_path = source_directory + '/' + timeseries_file
           if column > 0:
             generate_time_series_plot(r, data_path, column, out_path, 600, 300)
           column += 1
@@ -312,7 +328,7 @@ def main():
 
       resource_group_page(name, group_name, r, hist_large, hist_large, groups[group_name], out_path)
 
-  create_individual_pages(groups, destination_directory, name, resources, source_directory)
+  create_individual_pages(groups, destination_directory, name, resources, resource_units, source_directory)
 
   create_main_page(groups.keys(), name, resources, destination_directory, hist_small, hist_small)
   ## create group resource summaries
