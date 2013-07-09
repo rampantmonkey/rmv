@@ -93,7 +93,7 @@ def rule_id_for_task(task):
 def resource_group_page(name, group_name, resource, width, height, tasks, out_path):
   page  = "<!doctype html>\n"
   page += "<meta name=\"viewport\" content=\"initial-scale=1.0, width=device-width\" />\n"
-  page += "<link rel=\"stylesheet\" type=\"text/css\" media=\"screen, projection\" href\"" + "../../css/style.css\" />\n"
+  page += '<link rel="stylesheet" type="text/css" media="screen, projection" href="../../css/style.css" />' + "\n"
   page += "<title>Workflow</title>\n"
   page += "<div class=\"content\">\n"
   page += "<h1><a href=\"../../index.html\">" + name + "</a> - " + group_name + " - " + resource + "</h1>\n"
@@ -205,6 +205,7 @@ def create_individual_pages(groups, destination_directory, name, resources, unit
             generate_time_series_plot(r, data_path, column, out_path, 600, 300)
           column += 1
       page  = "<html>\n"
+      page += '<link rel="stylesheet" type="text/css" media="screen, projection" href="../css/style.css" />' + "\n"
       page += "<h1><a href=\"../index.html\">" + name + "</a> - " + group_name + " - " + rule_id_for_task(task) + "</h1>\n"
       page += "<table>\n"
       page += "<tr><td>command</td><td>" + task.get('command') + "</td></tr>\n"
@@ -331,10 +332,12 @@ def main():
   create_individual_pages(groups, destination_directory, name, resources, resource_units, source_directory)
 
   create_main_page(groups.keys(), name, resources, destination_directory, hist_small, hist_small)
-  ## create group resource summaries
+
   ## make combined time series
   ## plot makeflow log
-  ## copy static files
+
+  os.system("cp -r static/* " + destination_directory)
+
   ## clean up temporary files
 
 main()
