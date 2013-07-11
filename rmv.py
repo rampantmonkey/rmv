@@ -305,8 +305,18 @@ def main():
                     "bytes_written":   "GB",
                     "workdir_num_files": " ",
                     "workdir_footprint": "GB"
-                    }
-  resources = resource_units.keys()
+                   }
+  resources = [ "wall_time",
+                "cpu_time",
+                "max_concurrent_processes",
+                "virtual_memory",
+                "resident_memory",
+                "swap_memory",
+                "bytes_read",
+                "bytes_written",
+                "workdir_num_files",
+                "workdir_footprint"
+              ]
 
   groups = load_summaries_by_group(summary_paths)
 
