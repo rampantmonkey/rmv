@@ -155,22 +155,24 @@ def task_has_timeseries(task, source_directory):
     return None
   return timeseries_name
 
-def fill_in_time_series_format(resource, data_path, column, out_path, width=1250, height=500):
-   commands  = 'set terminal png transparent size ' + str(width) + ',' + str(height) + "\n"
-   commands += "set bmargin 4\n"
-   commands += "unset key\n"
-   commands += 'set xlabel "Time (seconds)" offset 0,-2 character' + "\n"
-   commands += 'set ylabel "' + resource + '" offset 0,-2 character' + "\n"
-   commands += 'set output "' + out_path + '"' + "\n"
-   commands += "set yrange [0:*]\n"
-   commands += "set xrange [0:*]\n"
-   commands += "set xtics right rotate by -45\n"
-   commands += "set bmargin 7\n"
-   commands += 'plot"' + data_path + '" using 1:' + str(column) + ' w lines lw 5 lc rgb"#465510"' + "\n"
-   return commands
+def fill_in_time_series_format(resource, unit, data_path, column, out_path, width=1250, height=500):
+  if unit != " ":
+    unit = ' (' + unit + ')'
+  commands  = 'set terminal png transparent size ' + str(width) + ',' + str(height) + "\n"
+  commands += "set bmargin 4\n"
+  commands += "unset key\n"
+  commands += 'set xlabel "Time (seconds)" offset 0,-2 character' + "\n"
+  commands += 'set ylabel "' + resource + unit + '" offset 0,-2 character' + "\n"
+  commands += 'set output "' + out_path + '"' + "\n"
+  commands += "set yrange [0:*]\n"
+  commands += "set xrange [0:*]\n"
+  commands += "set xtics right rotate by -45\n"
+  commands += "set bmargin 7\n"
+  commands += 'plot"' + data_path + '" using 1:' + str(column) + ' w lines lw 5 lc rgb"#465510"' + "\n"
+  return commands
 
-def generate_time_series_plot(resource, data_path, column, out_path, width, height):
-  commands = fill_in_time_series_format(resource, data_path, column, out_path, width, height)
+def generate_time_series_plot(resource, unit, data_path, column, out_path, width, height):
+  commands = fill_in_time_series_format(resource, unit, data_path, column, out_path, width, height)
   gnuplot(commands)
 
 def scale_time_series(source_directory, data_file, units):
@@ -185,6 +187,8 @@ def scale_time_series(source_directory, data_file, units):
     if start < 0:
       start = data[0]
     data[0] = str((float(data[0]) - float(start))/10e5)
+    data[6] = str(scale_value(data[6] + ' B', 'GB'))
+    data[7] = str(scale_value(data[7] + ' B', 'GB'))
     out_stream.write("%s\n" % str.join(' ', data))
   data_stream.close()
   out_stream.close()
