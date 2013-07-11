@@ -202,11 +202,11 @@ def create_individual_pages(groups, destination_directory, name, resources, unit
       if timeseries_file != None:
         has_timeseries = True
         data_path = scale_time_series(source_directory, timeseries_file, units)
-        column = 0
+        column = 1
         for r in resources:
           out_path = destination_directory + '/' + group_name + '/' + r + '/' + rule_id_for_task(task) + '.png'
-          if column > 0:
-            generate_time_series_plot(r, data_path, column, out_path, 600, 300)
+          if column > 1:
+            generate_time_series_plot(r, units.get(r), data_path, column, out_path, 600, 300)
           column += 1
       page  = "<html>\n"
       page += '<link rel="stylesheet" type="text/css" media="screen, projection" href="../css/style.css" />' + "\n"
