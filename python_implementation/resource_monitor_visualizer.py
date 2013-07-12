@@ -46,12 +46,10 @@ def load_summaries_by_group(paths):
       summary[key] = value
     summary['filename'] = os.path.basename(sp)
 
-    ### determine group name
     group_name = summary.get('command').split(' ')[0]
     while group_name[0] == '.' or group_name[0] == '/':
       group_name = group_name[1:]
 
-    ### insert into groups
     if groups.get(group_name) == None:
       groups[group_name] = [summary]
     else:
@@ -188,6 +186,7 @@ def scale_time_series(source_directory, data_file, units, aggregate_data):
       start = data[0]
     data[6] = str(scale_value(data[6] + ' B', 'GB'))
     data[7] = str(scale_value(data[7] + ' B', 'GB'))
+
     # store in aggregate_data
     key = round(int(data[0])/1000000)
     previous_values = aggregate_data.get(key, [0,0,0,0,0,0,0,0,0])
@@ -326,7 +325,6 @@ def scale_value(initial, target_unit=" "):
 
 
 def main():
-  # initialize
   GNUPLOT_VERSION = find_gnuplot_version()
 
   (source_directory,
@@ -340,7 +338,6 @@ def main():
   workspace = '/tmp/rmv'
   make_path(workspace)
 
-  # run
   summary_paths = find_summary_paths(source_directory)
 
   resource_units = {"wall_time": "s",
@@ -403,11 +400,8 @@ def main():
 
   create_main_page(groups.keys(), name, resources, destination_directory, hist_small, hist_small, aggregate_height, aggregate_width, time_series_exist)
 
-  ## make combined time series
-  ## plot makeflow log
-
   os.system("cp -r static/* " + destination_directory)
 
-  ## clean up temporary files
+  os.system("rm -rf " + workspace)
 
 main()
