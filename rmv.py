@@ -256,7 +256,7 @@ def create_aggregate_plots(resources, units, work_directory, destination_directo
     commands = fill_in_time_series_format(r, unit, data_path, column, out_path, 1250, 500)
     gnuplot(commands)
 
-def create_main_page(group_names, name, resources, destination, hist_height, hist_width, has_timeseries):
+def create_main_page(group_names, name, resources, destination, hist_height=600, hist_width=600, timeseries_height=1250, timeseries_width=500, has_timeseries=False):
   out_path = destination + "/index.html"
   f = open(out_path, "w")
   content  = "<!doctype html>\n"
@@ -266,6 +266,22 @@ def create_main_page(group_names, name, resources, destination, hist_height, his
   content += '<title>' + name + "Workflow</title>\n"
   content += '<div class="content">' + "\n"
   content += '<h1>' + name + "Workflow</h1>\n"
+  if has_timeseries:
+    content += '<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>' + "\n"
+    content += '<script src="js/slides.min.jquery.js"></script>' + "\n"
+    content += '<script>' + "\n" + '  $(function(){' + "\n" + "    $('#slides').slides({ preload: true, });\n  });\n</script>\n"
+    content += '<!-- javascript and some images licensed under Apache-2.0 by Nathan Searles (http://nathansearles.com/) -->' + "\n"
+    content += '<section class="summary">' + "\n"
+    content += '  <div id="slides">' + "\n"
+    content += '    <div class="slides_container">' + "\n"
+    for index, r in enumerate(resources):
+      if index != 0:
+        content += '<div class="slide"><div class="item"><img src = "' + r + '_aggregate.png" /></div></div>' + "\n"
+    content += "</div>\n"
+    content += '<a href="#" class="prev"><img src="img/arrow-prev.png" width="24" height="43" alt="Arrow Prev"></a>' + "\n"
+    content += '<a href="#" class="next"><img src="img/arrow-next.png" width="24" height="43" alt="Arrow Next"></a>' + "\n"
+    content += "  </div>\n</section>\n"
+
   for g in group_names:
     content += '<h2>' + g + "</h2>\n"
     for r in resources:
@@ -375,15 +391,17 @@ def main():
 
       resource_group_page(name, group_name, r, hist_large, hist_large, groups[group_name], out_path)
 
+  aggregate_height = 500
+  aggregate_width = 1250
   aggregate_data = create_individual_pages(groups, destination_directory, name, resources, resource_units, source_directory)
-  write_aggregate_data(aggregate_data, resources, workspace)
-  create_aggregate_plots(resources, resource_units, workspace, destination_directory)
 
   time_series_exist = False
   if aggregate_data != {}:
     time_series_exist = True
+    write_aggregate_data(aggregate_data, resources, workspace)
+    create_aggregate_plots(resources, resource_units, workspace, destination_directory)
 
-  create_main_page(groups.keys(), name, resources, destination_directory, hist_small, hist_small, time_series_exist)
+  create_main_page(groups.keys(), name, resources, destination_directory, hist_small, hist_small, aggregate_height, aggregate_width, time_series_exist)
 
   ## make combined time series
   ## plot makeflow log
