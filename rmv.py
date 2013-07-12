@@ -247,6 +247,15 @@ def write_aggregate_data(data, resources, work_directory):
   for f in files:
     f.close()
 
+def create_aggregate_plots(resources, units, work_directory, destination_directory):
+  for r in resources:
+    unit = units.get(r)
+    data_path = work_directory + '/' + r + '.aggregate'
+    column = 2
+    out_path = destination_directory + '/' + r + '_aggregate.png'
+    commands = fill_in_time_series_format(r, unit, data_path, column, out_path, 1250, 500)
+    gnuplot(commands)
+
 def create_main_page(group_names, name, resources, destination, hist_height, hist_width, has_timeseries):
   out_path = destination + "/index.html"
   f = open(out_path, "w")
@@ -368,6 +377,7 @@ def main():
 
   aggregate_data = create_individual_pages(groups, destination_directory, name, resources, resource_units, source_directory)
   write_aggregate_data(aggregate_data, resources, workspace)
+  create_aggregate_plots(resources, resource_units, workspace, destination_directory)
 
   time_series_exist = False
   if aggregate_data != {}:
