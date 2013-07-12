@@ -175,7 +175,7 @@ def generate_time_series_plot(resource, unit, data_path, column, out_path, width
   commands = fill_in_time_series_format(resource, unit, data_path, column, out_path, width, height)
   gnuplot(commands)
 
-def scale_time_series(source_directory, data_file, units):
+def scale_time_series(source_directory, data_file, units, aggregate_data):
   start = -1
   out_file_path = '/tmp/rmv/' + data_file + '.scaled'
   out_stream = open(out_file_path, 'w')
@@ -186,22 +186,30 @@ def scale_time_series(source_directory, data_file, units):
     data = line.split()
     if start < 0:
       start = data[0]
-    data[0] = str((float(data[0]) - float(start))/10e5)
     data[6] = str(scale_value(data[6] + ' B', 'GB'))
     data[7] = str(scale_value(data[7] + ' B', 'GB'))
+    # store in aggregate_data
+    key = round(int(data[0])/1000000)
+    previous_values = aggregate_data.get(key, [0,0,0,0,0,0,0,0,0])
+    for x in range(0,8):
+      previous_values[x] = previous_values[x] + float(data[x+1])
+    aggregate_data[key]  = previous_values
+
+    data[0] = str((float(data[0]) - float(start))/10e5)
     out_stream.write("%s\n" % str.join(' ', data))
   data_stream.close()
   out_stream.close()
-  return out_file_path
+  return out_file_path, aggregate_data
 
 def create_individual_pages(groups, destination_directory, name, resources, units, source_directory):
+  aggregate_data = {}
   for group_name in groups:
     for task in groups[group_name]:
       timeseries_file = task_has_timeseries(task, source_directory)
       has_timeseries = False
       if timeseries_file != None:
         has_timeseries = True
-        data_path = scale_time_series(source_directory, timeseries_file, units)
+        data_path, aggregate_data = scale_time_series(source_directory, timeseries_file, units, aggregate_data)
         column = 1
         for r in resources:
           out_path = destination_directory + '/' + group_name + '/' + r + '/' + rule_id_for_task(task) + '.png'
@@ -223,8 +231,23 @@ def create_individual_pages(groups, destination_directory, name, resources, unit
       f = open(destination_directory + "/" + group_name + "/" + rule_id_for_task(task) + ".html", "w")
       f.write("%s\n" % page)
       f.close()
+  return aggregate_data
 
-def create_main_page(group_names, name, resources, destination, hist_height=600, hist_width=600):
+def write_aggregate_data(data, resources, work_directory):
+  sorted_keys = sorted(data.keys(), key=lambda x: float(x))
+  start_time = float(sorted_keys[0])
+  files = []
+  for index, r in enumerate(resources):
+    if index != 0:
+      f = open(work_directory + '/' + r + '.aggregate', 'w')
+      files.append(f)
+  for k in sorted_keys:
+    for index, f in enumerate(files):
+      f.write("%s %d\n" % ((k-start_time), data.get(k)[index]))
+  for f in files:
+    f.close()
+
+def create_main_page(group_names, name, resources, destination, hist_height, hist_width, has_timeseries):
   out_path = destination + "/index.html"
   f = open(out_path, "w")
   content  = "<!doctype html>\n"
@@ -343,9 +366,14 @@ def main():
 
       resource_group_page(name, group_name, r, hist_large, hist_large, groups[group_name], out_path)
 
-  create_individual_pages(groups, destination_directory, name, resources, resource_units, source_directory)
+  aggregate_data = create_individual_pages(groups, destination_directory, name, resources, resource_units, source_directory)
+  write_aggregate_data(aggregate_data, resources, workspace)
 
-  create_main_page(groups.keys(), name, resources, destination_directory, hist_small, hist_small)
+  time_series_exist = False
+  if aggregate_data != {}:
+    time_series_exist = True
+
+  create_main_page(groups.keys(), name, resources, destination_directory, hist_small, hist_small, time_series_exist)
 
   ## make combined time series
   ## plot makeflow log
