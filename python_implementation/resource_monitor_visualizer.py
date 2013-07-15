@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import os
-import argparse
+import sys
 
 def make_path(path):
   try:
@@ -15,15 +15,18 @@ def find_gnuplot_version():
 def source_exists(path):
   if not os.path.isdir(path):
     print "source directory does not exist"
-    exit(1)
+    sys.exit(1)
 
 def get_args():
-  option_parser = argparse.ArgumentParser(description='Visualize resource monitor data')
-  option_parser.add_argument("source", help="the directory containing your data")
-  option_parser.add_argument("destination", help="the desired output directory")
-  option_parser.add_argument("name", help="the name of the workflow")
-  args = option_parser.parse_args()
-  return args.source, args.destination, args.name
+  if len(sys.argv) != 4:
+    print "Usage: " + __file__ + " source destination name"
+    sys.exit(1)
+
+  source = sys.argv[1]
+  destination = sys.argv[2]
+  name = sys.argv[3]
+  return source, destination, name
+
 
 def find_summary_paths(source):
   summary_paths = []
